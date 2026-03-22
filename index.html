@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ada's Work – Croșetat & Tricotat cu Dragoste</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crimson: #8B1A1A;
+    --crimson-light: #B03030;
+    --crimson-deep: #5C0E0E;
+    --cream: #FAF6F0;
+    --cream-dark: #F0E8DC;
+    --gold: #9B7B3A;
+    --gold-light: #C4A05A;
+    --text-dark: #2A1A1A;
+    --text-mid: #5A3A3A;
+    --text-light: #8A6A6A;
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* ── CURSOR ── */
+  body { cursor: none; }
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--crimson);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: multiply;
+  }
+  .cursor.hover { width: 32px; height: 32px; background: var(--gold-light); opacity: 0.6; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 20px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(250, 246, 240, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(139, 26, 26, 0.08);
+    transition: padding 0.3s;
+  }
+  nav.scrolled { padding: 12px 60px; }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--crimson-deep);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-logo img {
+    height: 80px;
+    width: 80px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border-radius: 50%;
+    mix-blend-mode: multiply;
+  }
+  .nav-logo span { color: var(--gold); font-style: italic; }
+
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    text-decoration: none;
+    position: relative;
+    transition: color 0.2s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1px; background: var(--crimson);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .nav-links a:hover { color: var(--crimson); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  .nav-cta {
+    background: var(--crimson);
+    color: var(--white) !important;
+    padding: 8px 20px;
+    border-radius: 2px;
+    letter-spacing: 0.1em !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--crimson-deep) !important; color: var(--white) !important; }
+  .nav-cta::after { display: none !important; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 60px 80px 80px;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 400;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 5vw, 5.5rem);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--text-dark);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--crimson);
+    font-weight: 400;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 44px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-actions {
+    display: flex; gap: 16px; align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .btn-primary {
+    background: var(--crimson);
+    color: var(--white);
+    padding: 14px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    border-radius: 2px;
+    cursor: none;
+    transition: background 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--crimson-deep); transform: translateY(-1px); }
+
+  .btn-secondary {
+    color: var(--text-mid);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: color 0.2s;
+    cursor: none;
+  }
+  .btn-secondary:hover { color: var(--crimson); }
+  .btn-secondary::before { content: '↓'; font-size: 1rem; }
+
+  .hero-stats {
+    display: flex; gap: 40px;
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(139,26,26,0.1);
+    opacity: 0;
+    animation: fadeUp 0.8s 1s forwards;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 500;
+    color: var(--crimson);
+    display: block;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* Hero Right — decorative */
+  .hero-right {
+    background: var(--crimson-deep);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 1.2s 0.3s forwards;
+  }
+
+  .hero-right-inner {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+
+  /* Yarn texture SVG background */
+  .hero-bg-pattern {
+    position: absolute; inset: 0;
+    opacity: 0.07;
+    background-image: repeating-linear-gradient(
+      45deg,
+      var(--cream) 0px, var(--cream) 1px,
+      transparent 1px, transparent 12px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      var(--cream) 0px, var(--cream) 1px,
+      transparent 1px, transparent 12px
+    );
+  }
+
+  .hero-circle {
+    width: 380px; height: 380px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .hero-circle::before {
+    content: '';
+    position: absolute;
+    width: 460px; height: 460px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .hero-logo-large {
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .hero-logo-large img {
+    width: 200px; height: 200px;
+    object-fit: contain; border-radius: 50%;
+  }
+
+  .hero-tag {
+    position: absolute;
+    background: var(--gold);
+    color: var(--white);
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .hero-tag:nth-child(1) { top: 20%; right: 10%; transform: rotate(3deg); }
+  .hero-tag:nth-child(2) { bottom: 25%; left: 8%; transform: rotate(-2deg); }
+  .hero-tag:nth-child(3) { top: 55%; right: 6%; transform: rotate(-4deg); }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 100px 80px; }
+
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+  }
+  .section-title em { font-style: italic; color: var(--crimson); }
+
+  /* ── CATEGORII ── */
+  #categorii { background: var(--cream-dark); }
+
+  .categories-intro {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 60px; align-items: end;
+    margin-bottom: 60px;
+  }
+  .categories-intro p {
+    font-size: 1rem; font-weight: 300;
+    color: var(--text-mid); line-height: 1.7;
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .category-card {
+    background: var(--cream);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+  }
+  .category-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(139,26,26,0.12); }
+
+  .category-img {
+    height: 200px;
+    background: var(--crimson-deep);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+
+  /* Placeholder patterns per category */
+  .cat-haine .category-img { background: linear-gradient(135deg, #5C0E0E 0%, #8B1A1A 100%); }
+  .cat-copii .category-img { background: linear-gradient(135deg, #6B2A0A 0%, #9B4A2A 100%); }
+  .cat-accesorii .category-img { background: linear-gradient(135deg, #7B4A1A 0%, #9B7B3A 100%); }
+  .cat-deco .category-img { background: linear-gradient(135deg, #3A1A1A 0%, #5C0E0E 100%); }
+
+  .category-img img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+    transition: transform 0.5s, opacity 0.3s;
+  }
+  .category-card:hover .category-img img { transform: scale(1.07); opacity: 1; }
+
+  .category-icon {
+    font-size: 3rem;
+    opacity: 0.6;
+    transition: transform 0.3s, opacity 0.3s;
+    position: relative; z-index: 1;
+  }
+  .category-card:hover .category-icon { transform: scale(1.15); opacity: 0.9; }
+
+  .category-body { padding: 20px; }
+  .category-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 500;
+    color: var(--text-dark); margin-bottom: 6px;
+  }
+  .category-desc { font-size: 0.82rem; color: var(--text-light); font-weight: 300; }
+
+  .category-arrow {
+    position: absolute; top: 16px; right: 16px;
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 0.9rem;
+    opacity: 0; transform: translateX(-4px);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .category-card:hover .category-arrow { opacity: 1; transform: translateX(0); }
+
+  /* ── PRODUSE FEATURED ── */
+  #produse { background: var(--cream); }
+
+  .products-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 50px;
+  }
+  .products-filter {
+    display: flex; gap: 8px;
+  }
+  .filter-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    border: 1px solid rgba(139,26,26,0.2);
+    background: transparent;
+    color: var(--text-mid);
+    border-radius: 2px;
+    cursor: none;
+    transition: all 0.2s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--crimson);
+    border-color: var(--crimson);
+    color: var(--white);
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .product-card {
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: none;
+    position: relative;
+    aspect-ratio: 3/4;
+  }
+  .product-card:hover .product-img img { transform: scale(1.06); }
+
+  .product-img {
+    width: 100%; height: 100%;
+    overflow: hidden;
+  }
+  .product-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+  }
+  .product-img-placeholder {
+    font-size: 4rem; opacity: 0.25;
+  }
+  .product-badge {
+    position: absolute; top: 12px; left: 12px;
+    background: var(--gold);
+    color: var(--white);
+    font-size: 0.65rem; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px; border-radius: 2px;
+  }
+  .product-badge.nou { background: var(--crimson); }
+  .product-wishlist {
+    position: absolute; top: 12px; right: 12px;
+    width: 34px; height: 34px;
+    background: var(--white);
+    border-radius: 50%;
+    border: none; cursor: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    opacity: 0; transform: scale(0.8);
+    transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .product-card:hover .product-wishlist { opacity: 1; transform: scale(1); }
+
+  .product-body { padding: 20px; }
+  .product-cat {
+    font-size: 0.68rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .product-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-weight: 500;
+    color: var(--text-dark); margin-bottom: 8px;
+  }
+  .product-price {
+    font-size: 1.1rem; font-weight: 500;
+    color: var(--crimson);
+  }
+  .product-price .old-price {
+    font-size: 0.85rem; color: var(--text-light);
+    text-decoration: line-through; margin-right: 8px;
+    font-weight: 300;
+  }
+  .product-footer {
+    padding: 0 20px 20px;
+  }
+  .btn-add {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--crimson);
+    color: var(--crimson);
+    padding: 10px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    cursor: none;
+    transition: all 0.2s;
+  }
+  .btn-add:hover { background: var(--crimson); color: var(--white); }
+
+  .products-more {
+    text-align: center; margin-top: 50px;
+  }
+
+  /* ── PERSONALIZATE ── */
+  #personalizate {
+    background: var(--crimson-deep);
+    color: var(--cream);
+  }
+
+  .custom-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+  }
+
+  .custom-label { color: var(--gold-light) !important; }
+  .custom-title { color: var(--cream) !important; }
+  .custom-title em { color: var(--gold-light) !important; }
+
+  .custom-text {
+    font-size: 1rem; font-weight: 300;
+    color: rgba(250,246,240,0.75);
+    line-height: 1.8; margin-bottom: 36px;
+  }
+
+  .custom-steps {
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .custom-step {
+    display: flex; gap: 20px; align-items: flex-start;
+  }
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1; min-width: 40px;
+  }
+  .step-text strong {
+    display: block;
+    font-size: 0.9rem; font-weight: 500;
+    color: var(--cream); margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+  .step-text span {
+    font-size: 0.83rem; font-weight: 300;
+    color: rgba(250,246,240,0.6);
+  }
+
+  .custom-cta { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  .btn-wa {
+    background: #25D366;
+    color: var(--white);
+    padding: 14px 28px;
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    cursor: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-wa:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-email {
+    background: transparent;
+    color: var(--cream);
+    padding: 14px 28px;
+    border-radius: 2px;
+    border: 1px solid rgba(250,246,240,0.3);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    cursor: none;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .btn-email:hover { border-color: var(--gold-light); transform: translateY(-1px); }
+
+  .custom-right {
+    position: relative;
+  }
+  .custom-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 36px;
+    backdrop-filter: blur(8px);
+  }
+  .custom-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 400;
+    color: var(--cream); margin-bottom: 24px;
+  }
+  .custom-form-group { margin-bottom: 16px; }
+  .custom-form-group label {
+    display: block;
+    font-size: 0.7rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(250,246,240,0.5);
+    margin-bottom: 8px;
+  }
+  .custom-form-group input,
+  .custom-form-group select,
+  .custom-form-group textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 2px;
+    padding: 10px 14px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.88rem; font-weight: 300;
+    color: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .custom-form-group input::placeholder,
+  .custom-form-group textarea::placeholder { color: rgba(250,246,240,0.3); }
+  .custom-form-group input:focus,
+  .custom-form-group select:focus,
+  .custom-form-group textarea:focus { border-color: var(--gold-light); }
+  .custom-form-group select option { background: var(--crimson-deep); }
+  .custom-form-group textarea { resize: vertical; min-height: 80px; }
+
+  .upload-zone {
+    border: 1px dashed rgba(255,255,255,0.25);
+    border-radius: 4px;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--gold-light);
+    background: rgba(255,255,255,0.04);
+  }
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-icon { font-size: 1.6rem; margin-bottom: 8px; opacity: 0.6; }
+  .upload-text {
+    font-size: 0.75rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(250,246,240,0.45);
+  }
+  .upload-text span { color: var(--gold-light); }
+  .upload-preview {
+    margin-top: 12px; display: none;
+    position: relative;
+  }
+  .upload-preview img {
+    width: 100%; max-height: 160px;
+    object-fit: cover; border-radius: 2px;
+  }
+  .upload-preview-remove {
+    position: absolute; top: 6px; right: 6px;
+    background: var(--crimson); color: white;
+    border: none; border-radius: 50%;
+    width: 22px; height: 22px; font-size: 0.75rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+
+  .btn-submit {
+    width: 100%;
+    background: var(--gold);
+    color: var(--white);
+    border: none;
+    padding: 14px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    cursor: none;
+    transition: background 0.2s;
+    margin-top: 8px;
+  }
+  .btn-submit:hover { background: var(--gold-light); }
+
+  /* ── CONFIRMARE MODAL ── */
+  .confirm-overlay {
+    position: fixed; inset: 0; z-index: 9000;
+    background: rgba(42, 26, 26, 0.7);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s;
+  }
+  .confirm-overlay.active { opacity: 1; pointer-events: all; }
+  .confirm-box {
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 52px 44px;
+    max-width: 420px; width: 90%;
+    text-align: center;
+    transform: translateY(24px);
+    transition: transform 0.35s;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+  }
+  .confirm-overlay.active .confirm-box { transform: translateY(0); }
+  .confirm-icon {
+    font-size: 2.8rem; margin-bottom: 20px;
+    display: block;
+  }
+  .confirm-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 400;
+    color: var(--crimson-deep);
+    margin-bottom: 12px;
+  }
+  .confirm-msg {
+    font-size: 0.95rem; font-weight: 300;
+    color: var(--text-mid); line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .confirm-close {
+    background: var(--crimson);
+    color: var(--white);
+    border: none;
+    padding: 13px 36px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    cursor: none;
+    transition: background 0.2s;
+  }
+  .confirm-close:hover { background: var(--crimson-deep); }
+
+  /* ── LIVRARE MODAL ── */
+  .livrare-overlay {
+    position: fixed; inset: 0; z-index: 9000;
+    background: rgba(42, 26, 26, 0.7);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s;
+  }
+  .livrare-overlay.active { opacity: 1; pointer-events: all; }
+  .livrare-box {
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 48px 44px;
+    max-width: 560px; width: 92%;
+    max-height: 85vh; overflow-y: auto;
+    transform: translateY(24px);
+    transition: transform 0.35s;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+    position: relative;
+  }
+  .livrare-overlay.active .livrare-box { transform: translateY(0); }
+  .livrare-close-x {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none;
+    font-size: 1.2rem; color: var(--text-light);
+    cursor: none; line-height: 1;
+    transition: color 0.2s;
+  }
+  .livrare-close-x:hover { color: var(--crimson); }
+  .livrare-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 400;
+    color: var(--crimson-deep);
+    margin-bottom: 32px;
+    text-align: center;
+  }
+  .livrare-section {
+    margin-bottom: 28px;
+  }
+  .livrare-section h3 {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .livrare-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  .livrare-section ul li {
+    font-size: 0.92rem;
+    font-weight: 300;
+    color: var(--text-mid);
+    line-height: 1.8;
+    padding-left: 16px;
+    position: relative;
+  }
+  .livrare-section ul li::before {
+    content: '·';
+    position: absolute; left: 0;
+    color: var(--crimson);
+    font-size: 1.2rem; line-height: 1.5;
+  }
+  .livrare-divider {
+    border: none;
+    border-top: 1px solid rgba(139,26,26,0.1);
+    margin: 24px 0;
+  }
+  .livrare-note {
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: var(--text-light);
+    text-align: center;
+    font-style: italic;
+    margin-bottom: 28px;
+  }
+  .livrare-btn-close {
+    display: block;
+    width: 100%;
+    background: var(--crimson);
+    color: var(--white);
+    border: none;
+    padding: 13px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    cursor: none;
+    transition: background 0.2s;
+  }
+  .livrare-btn-close:hover { background: var(--crimson-deep); }
+
+  /* ── DESPRE ── */
+  #despre { background: var(--cream-dark); }
+
+  .about-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+  }
+
+  .about-img-wrap {
+    position: relative;
+  }
+  .about-photos-duo {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/5;
+  }
+  .about-photo-main {
+    position: absolute;
+    top: 0; left: 0;
+    width: 82%;
+    aspect-ratio: 3/4;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+  }
+  .about-photo-main img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .about-photo-secondary {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 52%;
+    aspect-ratio: 1/1;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 4px solid var(--cream-dark);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .about-photo-secondary img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .about-img-box {
+    width: 100%; aspect-ratio: 4/5;
+    background: var(--crimson-deep);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .about-img-placeholder { font-size: 5rem; opacity: 0.2; }
+  .about-img-deco {
+    position: absolute; bottom: -20px; right: -20px;
+    width: 160px; height: 160px;
+    border: 2px solid var(--gold);
+    border-radius: 4px;
+    opacity: 0.4;
+  }
+  .about-img-tag {
+    position: absolute; top: 24px; left: -16px;
+    background: var(--gold);
+    color: var(--white);
+    font-size: 0.68rem; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    transform: rotate(-90deg) translateX(-50%);
+    transform-origin: left center;
+    white-space: nowrap;
+  }
+
+  .about-text p {
+    font-size: 1rem; font-weight: 300;
+    color: var(--text-mid); line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  .about-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-style: italic;
+    color: var(--crimson); font-weight: 400;
+    line-height: 1.5;
+    border-left: 3px solid var(--crimson);
+    padding-left: 24px;
+    margin: 32px 0;
+  }
+
+  .about-socials { display: flex; gap: 16px; margin-top: 32px; }
+  .social-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid rgba(139,26,26,0.2);
+    border-radius: 2px;
+    color: var(--text-mid);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.2s;
+  }
+  .social-btn:hover { background: var(--crimson); border-color: var(--crimson); color: var(--white); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--text-dark);
+    color: var(--cream);
+    padding: 60px 80px 36px;
+  }
+
+  .footer-top {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px; margin-bottom: 48px;
+  }
+
+  .footer-brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem; font-weight: 400;
+    color: var(--cream); margin-bottom: 12px;
+  }
+  .footer-brand-name span { color: var(--gold); font-style: italic; }
+  .footer-tagline {
+    font-size: 0.85rem; font-weight: 300;
+    color: rgba(250,246,240,0.5); line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .footer-social { display: flex; gap: 12px; }
+  .footer-social a {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(250,246,240,0.15);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(250,246,240,0.5);
+    text-decoration: none; font-size: 0.8rem;
+    transition: all 0.2s; cursor: none;
+  }
+  .footer-social a:hover { border-color: var(--gold); color: var(--gold); }
+
+  .footer-col h4 {
+    font-size: 0.72rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 10px; }
+  .footer-col a {
+    color: rgba(250,246,240,0.5);
+    text-decoration: none; font-size: 0.85rem; font-weight: 300;
+    transition: color 0.2s; cursor: none;
+  }
+  .footer-col a:hover { color: var(--cream); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(250,246,240,0.08);
+    padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-copy {
+    font-size: 0.78rem; color: rgba(250,246,240,0.3); font-weight: 300;
+  }
+  .footer-heart { color: var(--crimson); }
+
+  /* ── PRODUCTS LOADING ── */
+  .products-loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+  }
+  .product-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+  .product-card:hover .product-img img { transform: scale(1.04); }
+  .product-img-fallback {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.5rem; opacity: 0.2;
+  }
+
+  /* ── COMING SOON BANNER ── */
+  .coming-soon-banner {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, var(--crimson-deep), var(--crimson));
+    border-radius: 4px;
+    padding: 48px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 8px;
+  }
+  .coming-soon-text { flex: 1; }
+  .coming-soon-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+    display: block;
+  }
+  .coming-soon-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .coming-soon-title em { font-style: italic; color: var(--gold-light); }
+  .coming-soon-desc {
+    font-size: 0.88rem;
+    font-weight: 300;
+    color: rgba(250,246,240,0.75);
+    line-height: 1.7;
+    max-width: 420px;
+  }
+  .coming-soon-action {
+    flex-shrink: 0;
+  }
+  .coming-soon-action a {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--white);
+    padding: 13px 28px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+  .coming-soon-action a:hover { background: var(--gold-light); }
+
+  /* ── PLACEHOLDER CARDS ── */
+  .placeholder-card {
+    border-radius: 4px;
+    overflow: hidden;
+    aspect-ratio: 3/4;
+    background: linear-gradient(160deg, var(--cream-dark) 0%, #e8ddd0 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 1px dashed rgba(139,26,26,0.15);
+    position: relative;
+    animation: placeholderPulse 2.5s ease-in-out infinite;
+  }
+  .placeholder-card:nth-child(odd) { animation-delay: 0.4s; }
+  .placeholder-card:nth-child(3n) { animation-delay: 0.8s; }
+  @keyframes placeholderPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+  .placeholder-emoji { font-size: 2.2rem; opacity: 0.35; }
+  .placeholder-cat {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    opacity: 0.6;
+  }
+  .placeholder-soon {
+    position: absolute;
+    bottom: 12px;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    opacity: 0.5;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── KEYFRAMES ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 60px 24px; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { padding: 100px 24px 48px; }
+    .hero-right { height: 320px; }
+    .categories-intro { grid-template-columns: 1fr; gap: 24px; }
+    .categories-grid { grid-template-columns: repeat(2, 1fr); }
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
+    .custom-inner { grid-template-columns: 1fr; gap: 40px; }
+    .about-inner { grid-template-columns: 1fr; gap: 40px; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    footer { padding: 48px 24px 24px; }
+    body { cursor: auto; }
+    .cursor { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo"><img src="sigla.png" alt="Ada's Work Logo"></a>
+  <ul class="nav-links">
+    <li><a href="#produse">Colecții</a></li>
+    <li><a href="#categorii">Shop</a></li>
+    <li><a href="#personalizate">Comenzi</a></li>
+    <li><a href="#despre">Despre Ada</a></li>
+    <li><a href="#contact" class="nav-cta">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <span class="hero-eyebrow">Handmade cu dragoste · Sibiu, România</span>
+    <h1 class="hero-title">
+      Ce pot face,<br>
+      <em>două mâini dibace...</em>
+    </h1>
+    <p class="hero-subtitle">
+      Haine, accesorii, decorațiuni și bijuterii lucrate manual — fiecare piesă unică, făcută cu grijă și cu inima.
+    </p>
+    <div class="hero-actions">
+      <a href="#produse" class="btn-primary">Explorează Colecția</a>
+      <a href="#personalizate" class="btn-secondary">Comandă personalizat</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <span class="stat-num">100%</span>
+        <span class="stat-label">Handmade</span>
+      </div>
+      <div>
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Personalizări</span>
+      </div>
+      <div>
+        <span class="stat-num">♥</span>
+        <span class="stat-label">Dragoste</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right" style="background:none;">
+    <img src="ada.jpg" alt="Ada's Work" style="width:100%;height:100%;object-fit:cover;display:block;">
+    <div class="hero-right-inner" style="position:absolute;inset:0;">
+      <div class="hero-tag" style="top:18%;right:8%">Croșetat</div>
+      <div class="hero-tag" style="bottom:22%;left:6%">Tricotat</div>
+      <div class="hero-tag" style="top:52%;right:5%;background:var(--crimson)">Unic</div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORII -->
+<section id="categorii">
+  <div class="categories-intro">
+    <div>
+      <span class="section-label">Shop online</span>
+      <h2 class="section-title">Tot ce poți <em>purta</em><br>sau dărui</h2>
+    </div>
+    <p>De la hăinuțe delicate pentru cei mici până la accesorii pentru adulți — fiecare piesă este croșetată sau tricotată manual, cu atenție la fiecare detaliu.</p>
+  </div>
+
+  <div class="categories-grid reveal">
+    <div class="category-card cat-haine">
+      <div class="category-img">
+        <img src="https://images.unsplash.com/photo-1610288311735-39b7facbd095?w=600&h=400&fit=crop&q=80" alt="Haine Adulți Croșetate" onerror="this.remove()">
+        <div class="category-arrow">→</div>
+      </div>
+      <div class="category-body">
+        <div class="category-name">Haine Adulți</div>
+        <div class="category-desc">Pulovere, cardigane, topuri croșetate</div>
+      </div>
+    </div>
+    <div class="category-card cat-copii">
+      <div class="category-img">
+        <img src="https://images.unsplash.com/photo-1603321581635-d46915755425?w=600&h=400&fit=crop&q=80" alt="Haine Copii Tricotate" onerror="this.remove()">
+        <div class="category-arrow">→</div>
+      </div>
+      <div class="category-body">
+        <div class="category-name">Haine Copii</div>
+        <div class="category-desc">Hăinuțe și accesorii pentru cei mici</div>
+      </div>
+    </div>
+    <div class="category-card cat-accesorii">
+      <div class="category-img">
+        <img src="https://images.unsplash.com/photo-1759544632264-a31a9ff1e60b?w=600&h=400&fit=crop&q=80" alt="Accesorii Croșetate" onerror="this.remove()">
+        <div class="category-arrow">→</div>
+      </div>
+      <div class="category-body">
+        <div class="category-name">Accesorii & Bijuterii</div>
+        <div class="category-desc">Genți croșetate și bijuterii handmade</div>
+      </div>
+    </div>
+    <div class="category-card cat-deco">
+      <div class="category-img">
+        <img src="https://images.unsplash.com/photo-1633594308237-3dcfa56b4e69?w=600&h=400&fit=crop&q=80" alt="Decorațiuni Handmade" onerror="this.remove()">
+        <div class="category-arrow">→</div>
+      </div>
+      <div class="category-body">
+        <div class="category-name">Decorațiuni</div>
+        <div class="category-desc">Piese decorative handmade pentru casă</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUSE -->
+<section id="produse">
+  <div class="products-header">
+    <div>
+      <span class="section-label">Colecție</span>
+      <h2 class="section-title">Lucrări <em>realizate</em></h2>
+    </div>
+    <div class="products-filter" id="filter-bar">
+      <button class="filter-btn active" data-cat="toate">Toate</button>
+      <button class="filter-btn" data-cat="rochii">Rochii</button>
+      <button class="filter-btn" data-cat="fuste">Fuste</button>
+      <button class="filter-btn" data-cat="bluze">Bluze</button>
+      <button class="filter-btn" data-cat="caciuli">Căciuli</button>
+      <button class="filter-btn" data-cat="paturi">Pături</button>
+      <button class="filter-btn" data-cat="sosete">Șosete</button>
+      <button class="filter-btn" data-cat="accesorii">Accesorii</button>
+    </div>
+  </div>
+
+  <div class="products-grid" id="products-grid">
+    <div class="products-loading">
+      <span>Se încarcă produsele...</span>
+    </div>
+  </div>
+
+  <div class="products-more" id="products-more" style="display:none">
+    <a href="#" class="btn-primary" id="vezi-toate-btn">Vezi toate produsele</a>
+  </div>
+</section>
+
+<!-- COMENZI PERSONALIZATE -->
+<section id="personalizate">
+  <div class="custom-inner">
+    <div>
+      <span class="section-label custom-label">Fac și la comandă</span>
+      <h2 class="section-title custom-title">Piesa ta,<br><em>visul tău</em></h2>
+      <p class="custom-text">
+        Îți croșetez sau tricotez exact ce îți dorești — culoarea ta, dimensiunea ta, modelul tău. Fiecare comandă personalizată este tratată cu aceeași dragoste ca toate celelalte piese.
+      </p>
+      <div class="custom-steps">
+        <div class="custom-step">
+          <span class="step-num">01</span>
+          <div class="step-text">
+            <strong>Îmi spui ce vrei</strong>
+            <span>Culoare, dimensiune, model, ocazie</span>
+          </div>
+        </div>
+        <div class="custom-step">
+          <span class="step-num">02</span>
+          <div class="step-text">
+            <strong>Stabilim detaliile</strong>
+            <span>Preț, timp de execuție, materiale</span>
+          </div>
+        </div>
+        <div class="custom-step">
+          <span class="step-num">03</span>
+          <div class="step-text">
+            <strong>Croșetez cu drag</strong>
+            <span>Primești piesa unică a ta</span>
+          </div>
+        </div>
+      </div>
+      <div class="custom-cta" style="margin-top:36px">
+        <a href="https://wa.me/40774687192" class="btn-wa">📱 WhatsApp</a>
+        <a href="https://ada-passion-design.blogspot.com/2024/04/" class="btn-email" target="_blank">✍️ Blog</a>
+      </div>
+    </div>
+
+    <div class="custom-right">
+      <div class="custom-card">
+        <div class="custom-card-title">Trimite o cerere</div>
+        <div class="custom-form-group">
+          <label>Numele tău</label>
+          <input type="text" placeholder="Ana Ionescu">
+        </div>
+        <div class="custom-form-group">
+          <label>Email sau WhatsApp</label>
+          <input type="text" placeholder="ana@email.ro / 07xx xxx xxx">
+        </div>
+        <div class="custom-form-group">
+          <label>Categoria produsului</label>
+          <select>
+            <option value="">Alege o categorie...</option>
+            <option>Haine adulți</option>
+            <option>Haine copii</option>
+            <option>Accesorii</option>
+            <option>Bijuterii</option>
+            <option>Decorațiuni</option>
+          </select>
+        </div>
+        <div class="custom-form-group">
+          <label>Descrie ce îți dorești</label>
+          <textarea placeholder="Culori, dimensiuni, model, ocazie..."></textarea>
+        </div>
+        <div class="custom-form-group">
+          <label>Poza model <span style="opacity:0.4;font-size:0.65rem">(opțional)</span></label>
+          <input type="file" id="upload-input" accept="image/*" style="display:none">
+          <div class="upload-zone" id="upload-zone">
+            <div class="upload-icon">📎</div>
+            <div class="upload-text">Trage poza aici sau <span>alege fișier</span></div>
+          </div>
+          <div class="upload-preview" id="upload-preview">
+            <img id="upload-img" src="" alt="Model">
+            <button class="upload-preview-remove" id="upload-remove" type="button">✕</button>
+          </div>
+        </div>
+        <button class="btn-submit" id="btn-submit">Trimite cererea ✦</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL TERMENI & CONDITII -->
+<div class="livrare-overlay" id="termeni-overlay">
+  <div class="livrare-box">
+    <button class="livrare-close-x" id="termeni-close-x">✕</button>
+    <div class="livrare-title">Termeni & Condiții</div>
+
+    <div class="livrare-section">
+      <h3>📌 General</h3>
+      <ul>
+        <li>Ada's Work este un atelier handmade independent, condus de Ada Rusu Milea.</li>
+        <li>Prin plasarea unei comenzi, ești de acord cu termenii de mai jos.</li>
+        <li>Toate produsele sunt lucrate manual — pot exista mici variații față de poze, ceea ce le face unice.</li>
+      </ul>
+    </div>
+
+    <hr class="livrare-divider">
+
+    <div class="livrare-section">
+      <h3>🛒 Comenzi</h3>
+      <ul>
+        <li>Comanda devine confirmată după ce Ada te contactează și discutați detaliile.</li>
+        <li>Pentru comenzile personalizate se poate solicita un avans de <strong>30–50%</strong> din valoarea totală.</li>
+        <li>Ada își rezervă dreptul de a refuza o comandă în cazul în care nu poate fi executată conform dorințelor clientului.</li>
+      </ul>
+    </div>
+
+    <hr class="livrare-divider">
+
+    <div class="livrare-section">
+      <h3>💳 Plată</h3>
+      <ul>
+        <li>Plata se face prin transfer bancar, Revolut sau ramburs la livrare (cu confirmare prealabilă).</li>
+        <li>Produsele din stoc se achită integral înainte de expediere.</li>
+      </ul>
+    </div>
+
+    <hr class="livrare-divider">
+
+    <div class="livrare-section">
+      <h3>🔒 Date personale</h3>
+      <ul>
+        <li>Datele tale (nume, contact) sunt folosite exclusiv pentru procesarea comenzii.</li>
+        <li>Nu sunt transmise către terți și nu sunt folosite în scop publicitar.</li>
+      </ul>
+    </div>
+
+    <p class="livrare-note">Ultima actualizare: martie 2026 · Pentru întrebări, contactează-mă pe WhatsApp. 🧶</p>
+    <button class="livrare-btn-close" id="termeni-btn-close">Am înțeles ✦</button>
+  </div>
+</div>
+
+<!-- MODAL LIVRARE & RETURURI -->
+<div class="livrare-overlay" id="livrare-overlay">
+  <div class="livrare-box">
+    <button class="livrare-close-x" id="livrare-close-x">✕</button>
+    <div class="livrare-title">Livrare & Retururi</div>
+
+    <div class="livrare-section">
+      <h3>📦 Livrare</h3>
+      <ul>
+        <li>Fiecare piesă este lucrată manual, cu drag — termenul de finalizare este de <strong>5–14 zile lucrătoare</strong> de la confirmarea comenzii.</li>
+        <li>Livrare prin curier rapid (Fan Courier / DPD) — <strong>1–2 zile lucrătoare</strong> de la expediere.</li>
+        <li>Cost livrare: <strong>20 RON</strong> pe teritoriul României.</li>
+        <li>Livrare <strong>gratuită</strong> pentru comenzi peste <strong>250 RON</strong>.</li>
+        <li>Ridicare personală disponibilă — contactează-mă pe WhatsApp pentru detalii.</li>
+      </ul>
+    </div>
+
+    <hr class="livrare-divider">
+
+    <div class="livrare-section">
+      <h3>🔄 Retururi</h3>
+      <ul>
+        <li>Ai dreptul să returnezi produsul în termen de <strong>14 zile</strong> de la primire, conform legislației în vigoare.</li>
+        <li><strong>Produsele personalizate</strong> (comandate la cerere, cu specificații proprii) <strong>nu pot fi returnate</strong>, deoarece sunt create exclusiv pentru tine.</li>
+        <li>Produsul returnat trebuie să fie în stare originală — nefolosit, nespălat, cu eticheta intactă.</li>
+        <li>Costul returului este suportat de cumpărător.</li>
+        <li>Rambursarea se face în <strong>5–7 zile lucrătoare</strong> de la primirea produsului returnat.</li>
+      </ul>
+    </div>
+
+    <p class="livrare-note">Pentru orice întrebare, mă găsești oricând pe WhatsApp sau Instagram. 🧶</p>
+    <button class="livrare-btn-close" id="livrare-btn-close">Am înțeles ✦</button>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMARE -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <span class="confirm-icon">🧶</span>
+    <div class="confirm-title">Cererea ta a fost trimisă!</div>
+    <p class="confirm-msg">Mulțumesc pentru mesaj! Te voi contacta în cel mai scurt timp posibil pentru a discuta detaliile comenzii tale.</p>
+    <button class="confirm-close" id="confirm-close">Înapoi la meniu ✦</button>
+  </div>
+</div>
+
+<!-- DESPRE -->
+<section id="despre">
+  <div class="about-inner">
+    <div class="about-img-wrap reveal">
+      <div class="about-photos-duo">
+        <div class="about-photo-main">
+          <img src="ada1.png" alt="Ada croșetând" />
+        </div>
+        <div class="about-photo-secondary">
+          <img src="ada2.png" alt="Ada" />
+        </div>
+      </div>
+      <div class="about-img-tag">Ada's Work · Handmade</div>
+    </div>
+    <div class="about-text reveal">
+      <span class="section-label">Povestea mea</span>
+      <h2 class="section-title">Bună, eu sunt <em>Ada</em></h2>
+      <p>
+        Croșetez și tricotez de ani buni, dar pasiunea mea a crescut odată cu fiecare piesă finalizată. Ce a început ca un hobby s-a transformat într-un mod de a dărui bucurie.
+      </p>
+      <div class="about-quote">
+        „Fiecare ochi croșetat este un gând bun dat mai departe."
+      </div>
+      <p>
+        Creez haine pentru adulți și copii, accesorii, decorațiuni și bijuterii — toate lucrate manual, cu materiale de calitate, în ritmul meu. Nu există două piese identice.
+      </p>
+      <p>
+        Mă poți găsi pe Instagram, Facebook și TikTok, unde postez procesul de creație și noile colecții.
+      </p>
+      <div class="about-socials">
+        <a href="https://www.instagram.com/adarusumilea" target="_blank" class="social-btn">📸 Instagram</a>
+        <a href="https://www.facebook.com/ada.rusumilea/photos" target="_blank" class="social-btn">👥 Facebook</a>
+        <a href="https://www.tiktok.com/@ada.swork" target="_blank" class="social-btn"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:6px"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>TikTok</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand-name">Ada's <span>Work</span></div>
+      <p class="footer-tagline">Croșetat și tricotat manual,<br>cu dragoste și atenție la detalii.</p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/adarusumilea" target="_blank">📸</a>
+        <a href="https://www.facebook.com/ada.rusumilea/photos" target="_blank">👥</a>
+        <a href="https://www.tiktok.com/@ada.swork" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Colecții</h4>
+      <ul>
+        <li><a href="#categorii">Haine Adulți</a></li>
+        <li><a href="#categorii">Haine Copii</a></li>
+        <li><a href="#categorii">Accesorii</a></li>
+        <li><a href="#categorii">Bijuterii</a></li>
+        <li><a href="#categorii">Decorațiuni</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Informații</h4>
+      <ul>
+        <li><a href="#personalizate">Comenzi personalizate</a></li>
+        <li><a href="#despre">Despre Ada</a></li>
+        <li><a href="#" id="livrare-link">Livrare & Retururi</a></li>
+        <li><a href="#" id="termeni-link">Termeni & Condiții</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="https://ada-passion-design.blogspot.com/2024/04/" target="_blank">Blog</a></li>
+        <li><a href="https://wa.me/40774687192">WhatsApp</a></li>
+        <li><a href="https://www.instagram.com/adarusumilea" target="_blank">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 Ada's Work · Toate drepturile rezervate</span>
+    <span class="footer-copy">Făcut cu <span class="footer-heart">♥</span> handmade</span>
+  </div>
+</footer>
+
+<script>
+  // ── CUSTOM CURSOR ──
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+
+  // ── NAVBAR SCROLL ──
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // ── SCROLL REVEAL ──
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // ── MAPS ──
+  const catLabels = { haine:'Haine Adulți', copii:'Haine Copii', accesorii:'Accesorii', bijuterii:'Bijuterii', deco:'Decorațiuni' };
+  const catFallback = { haine:'👗', copii:'🧸', accesorii:'🧣', bijuterii:'💍', deco:'🌿' };
+  const catGradient = {
+    haine:'linear-gradient(135deg,#8B1A1A,#5C0E0E)',
+    copii:'linear-gradient(135deg,#6B2A0A,#9B4A2A)',
+    accesorii:'linear-gradient(135deg,#9B7B3A,#6B4A1A)',
+    bijuterii:'linear-gradient(135deg,#7B4A1A,#9B7B3A)',
+    deco:'linear-gradient(135deg,#3A1A1A,#5C0E0E)'
+  };
+
+  // ── RENDER CARD ──
+  function renderCard(p) {
+    return `
+    <div class="product-card" data-cat="${p.categorie}">
+      <div class="product-img">
+        <img src="${p.imagine}" alt="${p.categorie}" loading="lazy"
+             onerror="this.closest('.product-card').style.display='none';"/>
+      </div>
+    </div>`;
+  }
+
+  // ── STATE ──
+  let allProducts = [];
+  let activeFilter = 'toate';
+  const INITIAL_SHOW = 999;
+  let showAll = true;
+
+  function renderGrid() {
+    const grid = document.getElementById('products-grid');
+    const moreWrap = document.getElementById('products-more');
+    const filtered = activeFilter === 'toate' ? allProducts : allProducts.filter(p => p.categorie === activeFilter);
+    const toShow = showAll ? filtered : filtered.slice(0, INITIAL_SHOW);
+
+    grid.innerHTML = toShow.map(renderCard).join('');
+
+    // "Vezi toate" button
+    if (filtered.length > INITIAL_SHOW && !showAll) {
+      moreWrap.style.display = 'block';
+      document.getElementById('vezi-toate-btn').textContent = 'Vezi toate produsele (' + filtered.length + ')';
+    } else {
+      moreWrap.style.display = 'none';
+    }
+
+    // Staggered fade-in
+    grid.querySelectorAll('.product-card').forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.5s ' + (i*0.07) + 's, transform 0.5s ' + (i*0.07) + 's';
+      setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 50);
+    });
+
+    // Wishlist
+    grid.querySelectorAll('.product-wishlist').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.textContent = this.textContent === '♡' ? '♥' : '♡';
+        this.style.color = this.textContent === '♥' ? 'var(--crimson)' : '';
+      });
+    });
+
+    // Cursor on new cards
+    grid.querySelectorAll('button, .product-card').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+  }
+
+  // ── PLACEHOLDER CARDS ──
+  const placeholderCategories = [
+    { emoji: '👗', label: 'Haine Adulți' },
+    { emoji: '🧸', label: 'Haine Copii' },
+    { emoji: '🧣', label: 'Accesorii' },
+    { emoji: '💍', label: 'Bijuterii' },
+    { emoji: '🌿', label: 'Decorațiuni' },
+    { emoji: '🧤', label: 'Accesorii' },
+    { emoji: '🎀', label: 'Cadouri' },
+    { emoji: '🧶', label: 'Colecție nouă' },
+  ];
+
+  function showPlaceholders() {
+    const grid = document.getElementById('products-grid');
+    const banner = `
+      <div class="coming-soon-banner">
+        <div class="coming-soon-text">
+          <span class="coming-soon-label">Colecția se pregătește</span>
+          <div class="coming-soon-title">Pozele vin<br><em>în curând...</em></div>
+          <p class="coming-soon-desc">Lucrăm la colecție! Între timp, poți comanda orice piesă personalizată direct — spune-mi ce îți dorești.</p>
+        </div>
+        <div class="coming-soon-action">
+          <a href="#personalizate">Comandă acum ✦</a>
+        </div>
+      </div>`;
+    const cards = placeholderCategories.map(c => `
+      <div class="placeholder-card">
+        <span class="placeholder-emoji">${c.emoji}</span>
+        <span class="placeholder-cat">${c.label}</span>
+        <span class="placeholder-soon">În curând</span>
+      </div>`).join('');
+    grid.innerHTML = banner + cards;
+  }
+
+  // ── FETCH produse.json ──
+  async function loadProducts() {
+    try {
+      const res = await fetch('produse.json');
+      if (!res.ok) throw new Error('fetch failed');
+      allProducts = await res.json();
+      if (allProducts.length === 0) { showPlaceholders(); return; }
+      renderGrid();
+    } catch(e) {
+      showPlaceholders();
+    }
+  }
+
+  // ── FILTERS ──
+  document.getElementById('filter-bar').addEventListener('click', e => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.cat;
+    showAll = false;
+    renderGrid();
+  });
+
+  // ── VEZI TOATE ──
+  document.getElementById('vezi-toate-btn').addEventListener('click', e => {
+    e.preventDefault();
+    showAll = true;
+    renderGrid();
+  });
+
+  // ── CURSOR on static elements ──
+  document.querySelectorAll('a, button, .category-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+
+  loadProducts();
+
+  // ── UPLOAD PREVIEW ──
+  const uploadInput = document.getElementById('upload-input');
+  const uploadZone  = document.getElementById('upload-zone');
+  const uploadPreview = document.getElementById('upload-preview');
+  const uploadImg   = document.getElementById('upload-img');
+  const uploadRemove = document.getElementById('upload-remove');
+
+  function showPreview(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      uploadImg.src = e.target.result;
+      uploadPreview.style.display = 'block';
+      uploadZone.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  uploadZone.addEventListener('click', () => uploadInput.click());
+  uploadInput.addEventListener('change', e => showPreview(e.target.files[0]));
+
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    showPreview(e.dataTransfer.files[0]);
+  });
+
+  uploadRemove.addEventListener('click', () => {
+    uploadInput.value = '';
+    uploadImg.src = '';
+    uploadPreview.style.display = 'none';
+    uploadZone.style.display = 'block';
+  });
+
+  // ── TRIMITE CEREREA ──
+  const confirmOverlay = document.getElementById('confirm-overlay');
+  const confirmClose   = document.getElementById('confirm-close');
+  const submitBtn      = document.getElementById('btn-submit');
+  const customCard     = submitBtn.closest('.custom-card');
+
+  function resetForm() {
+    customCard.querySelectorAll('input[type="text"], textarea').forEach(el => el.value = '');
+    customCard.querySelector('select').selectedIndex = 0;
+    uploadInput.value = '';
+    uploadImg.src = '';
+    uploadPreview.style.display = 'none';
+    uploadZone.style.display = 'block';
+  }
+
+  submitBtn.addEventListener('click', () => {
+    confirmOverlay.classList.add('active');
+  });
+
+  confirmClose.addEventListener('click', () => {
+    confirmOverlay.classList.remove('active');
+    resetForm();
+    document.getElementById('personalizate').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  confirmOverlay.addEventListener('click', e => {
+    if (e.target === confirmOverlay) {
+      confirmOverlay.classList.remove('active');
+      resetForm();
+    }
+  });
+
+  confirmClose.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+  confirmClose.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+
+  // ── LIVRARE & RETURURI MODAL ──
+  const livrareOverlay  = document.getElementById('livrare-overlay');
+  const livrareLink     = document.getElementById('livrare-link');
+  const livrareCloseX   = document.getElementById('livrare-close-x');
+  const livrareCloseBtn = document.getElementById('livrare-btn-close');
+
+  function openLivrare(e) { e.preventDefault(); livrareOverlay.classList.add('active'); }
+  function closeLivrare() { livrareOverlay.classList.remove('active'); }
+
+  livrareLink.addEventListener('click', openLivrare);
+  livrareCloseX.addEventListener('click', closeLivrare);
+  livrareCloseBtn.addEventListener('click', closeLivrare);
+  livrareOverlay.addEventListener('click', e => { if (e.target === livrareOverlay) closeLivrare(); });
+
+  [livrareCloseX, livrareCloseBtn].forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+
+  // ── TERMENI & CONDITII MODAL ──
+  const termeniOverlay  = document.getElementById('termeni-overlay');
+  const termeniLink     = document.getElementById('termeni-link');
+  const termeniCloseX   = document.getElementById('termeni-close-x');
+  const termeniCloseBtn = document.getElementById('termeni-btn-close');
+
+  function openTermeni(e) { e.preventDefault(); termeniOverlay.classList.add('active'); }
+  function closeTermeni() { termeniOverlay.classList.remove('active'); }
+
+  termeniLink.addEventListener('click', openTermeni);
+  termeniCloseX.addEventListener('click', closeTermeni);
+  termeniCloseBtn.addEventListener('click', closeTermeni);
+  termeniOverlay.addEventListener('click', e => { if (e.target === termeniOverlay) closeTermeni(); });
+
+  [termeniCloseX, termeniCloseBtn].forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+</script>
+</body>
+</html>
