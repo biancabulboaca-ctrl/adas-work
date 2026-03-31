@@ -917,19 +917,19 @@ window.editGalerie = function(id) {
   document.getElementById('modal-galerie').classList.add('open');
 };
 
-window.previewGalerieImg = async function(input) {
+window.previewGalerieImg = function(input) {
   const file = input.files[0]; if (!file) return;
   const prog = document.getElementById('g-upload-progress');
-  prog.style.display = 'block'; prog.textContent = 'Se încarcă...';
-  const ext = file.name.split('.').pop();
-  const path = `galerie/${Date.now()}.${ext}`;
-  const { error } = await db.storage.from(BUCKET_GALERIE).upload(path, file, { upsert: true });
-  if (error) { prog.textContent = 'Eroare upload: ' + error.message; return; }
-  const { data: { publicUrl } } = db.storage.from(BUCKET_GALERIE).getPublicUrl(path);
-  document.getElementById('g-imagine').value = publicUrl;
-  const prev = document.getElementById('g-img-preview');
-  prev.src = publicUrl; prev.style.display = 'block';
-  prog.style.display = 'none';
+  prog.style.display = 'block'; prog.textContent = 'Se procesează...';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    document.getElementById('g-imagine').value = dataUrl;
+    const prev = document.getElementById('g-img-preview');
+    prev.src = dataUrl; prev.style.display = 'block';
+    prog.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
 };
 
 window.saveGalerie = async function() {
@@ -1027,19 +1027,19 @@ window.editShop = function(id) {
   document.getElementById('modal-shop').classList.add('open');
 };
 
-window.previewShopImg = async function(input) {
+window.previewShopImg = function(input) {
   const file = input.files[0]; if (!file) return;
   const prog = document.getElementById('s-upload-progress');
-  prog.style.display = 'block'; prog.textContent = 'Se încarcă...';
-  const ext = file.name.split('.').pop();
-  const path = `categorii/${Date.now()}.${ext}`;
-  const { error } = await db.storage.from(BUCKET_SHOP).upload(path, file, { upsert: true });
-  if (error) { prog.textContent = 'Eroare upload: ' + error.message; return; }
-  const { data: { publicUrl } } = db.storage.from(BUCKET_SHOP).getPublicUrl(path);
-  document.getElementById('s-imagine').value = publicUrl;
-  const prev = document.getElementById('s-img-preview');
-  prev.src = publicUrl; prev.style.display = 'block';
-  prog.style.display = 'none';
+  prog.style.display = 'block'; prog.textContent = 'Se procesează...';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    document.getElementById('s-imagine').value = dataUrl;
+    const prev = document.getElementById('s-img-preview');
+    prev.src = dataUrl; prev.style.display = 'block';
+    prog.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
 };
 
 window.saveShop = async function() {
@@ -1295,19 +1295,19 @@ window.deleteProdusPersistent = async function(id) {
   loadProduse();
 };
 
-window.uploadProdusFoto = async function(input) {
+window.uploadProdusFoto = function(input) {
   const file = input.files[0]; if (!file) return;
   const prog = document.getElementById('p-upload-progress');
-  prog.style.display = 'block'; prog.textContent = 'Se încarcă...';
-  const ext = file.name.split('.').pop();
-  const path = `produse/${Date.now()}.${ext}`;
-  const { error } = await db.storage.from(BUCKET_GALERIE).upload(path, file, { upsert: true });
-  if (error) { prog.textContent = 'Eroare: ' + error.message; return; }
-  const { data: { publicUrl } } = db.storage.from(BUCKET_GALERIE).getPublicUrl(path);
-  document.getElementById('p-imagine').value = publicUrl;
-  const prev = document.getElementById('p-img-preview');
-  prev.src = publicUrl; prev.style.display = 'block';
-  prog.style.display = 'none';
+  prog.style.display = 'block'; prog.textContent = 'Se procesează...';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    document.getElementById('p-imagine').value = dataUrl;
+    const prev = document.getElementById('p-img-preview');
+    prev.src = dataUrl; prev.style.display = 'block';
+    prog.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
 };
 
 window.toggleInShop = async function(id, currentVal) {
