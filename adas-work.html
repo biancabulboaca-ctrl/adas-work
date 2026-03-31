@@ -1235,7 +1235,7 @@
   </div>
 
   <div class="categories-grid reveal">
-    <div class="category-card cat-haine">
+    <div class="category-card cat-haine" onclick="filtreazaShop('haine', this)" style="cursor:pointer">
       <div class="category-img">
         <img src="https://images.unsplash.com/photo-1610288311735-39b7facbd095?w=600&h=400&fit=crop&q=80" alt="Haine Adulți Croșetate" onerror="this.remove()">
         <div class="category-arrow">→</div>
@@ -1245,7 +1245,7 @@
         <div class="category-desc">Pulovere, cardigane, topuri croșetate</div>
       </div>
     </div>
-    <div class="category-card cat-copii">
+    <div class="category-card cat-copii" onclick="filtreazaShop('copii', this)" style="cursor:pointer">
       <div class="category-img">
         <img src="https://images.unsplash.com/photo-1603321581635-d46915755425?w=600&h=400&fit=crop&q=80" alt="Haine Copii Tricotate" onerror="this.remove()">
         <div class="category-arrow">→</div>
@@ -1255,7 +1255,7 @@
         <div class="category-desc">Hăinuțe și accesorii pentru cei mici</div>
       </div>
     </div>
-    <div class="category-card cat-accesorii">
+    <div class="category-card cat-accesorii" onclick="filtreazaShop('accesorii', this)" style="cursor:pointer">
       <div class="category-img">
         <img src="https://images.unsplash.com/photo-1759544632264-a31a9ff1e60b?w=600&h=400&fit=crop&q=80" alt="Accesorii Croșetate" onerror="this.remove()">
         <div class="category-arrow">→</div>
@@ -1265,7 +1265,7 @@
         <div class="category-desc">Genți croșetate și bijuterii handmade</div>
       </div>
     </div>
-    <div class="category-card cat-deco">
+    <div class="category-card cat-deco" onclick="filtreazaShop('deco', this)" style="cursor:pointer">
       <div class="category-img">
         <img src="https://images.unsplash.com/photo-1633594308237-3dcfa56b4e69?w=600&h=400&fit=crop&q=80" alt="Decorațiuni Handmade" onerror="this.remove()">
         <div class="category-arrow">→</div>
@@ -1276,17 +1276,19 @@
       </div>
     </div>
   </div>
-</section>
 
-<!-- SHOP PRODUSE DE VÂNZARE -->
-<section id="shop-produse" style="display:none">
-  <div class="products-header">
-    <div>
-      <span class="section-label">De vânzare</span>
-      <h2 class="section-title">Disponibile <em>acum</em></h2>
+  <!-- Produse în shop, filtrate pe categorie -->
+  <div id="shop-produse-wrap" style="display:none; margin-top:60px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
+      <div>
+        <span class="section-label" id="shop-cat-label">Produse</span>
+        <h2 class="section-title" style="font-size:2rem" id="shop-cat-title">Disponibile <em>acum</em></h2>
+      </div>
+      <button onclick="inchideShop()" style="background:none;border:1px solid var(--cream-dark);padding:8px 16px;border-radius:2px;font-family:'Jost',sans-serif;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);cursor:pointer">× Închide</button>
     </div>
+    <div class="products-grid" id="shop-grid"></div>
+    <div id="shop-empty" style="display:none;text-align:center;padding:60px 20px;color:var(--text-light);font-size:0.9rem">Niciun produs disponibil în această categorie momentan.</div>
   </div>
-  <div class="products-grid" id="shop-grid"></div>
 </section>
 
 <!-- PRODUSE -->
@@ -1745,50 +1747,72 @@
   });
 
   loadProducts();
-  loadShopProduse();
+
+  // ── SHOP PRODUSE ──
+  const SUPABASE_URL = 'https://zrccztdehzwmeidlroub.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_w5xlg-WqYYnkPk8AwX9qdQ_NpIoyOgi';
+  let allShopProduse = [];
+  const catNames = { haine:'Haine Adulți', copii:'Haine Copii', accesorii:'Accesorii & Bijuterii', bijuterii:'Bijuterii', deco:'Decorațiuni', sosete:'Șosete', rochii:'Rochii', fuste:'Fuste', bluze:'Bluze', caciuli:'Căciuli', paturi:'Pături' };
 
   async function loadShopProduse() {
-    const SUPABASE_URL = 'https://zrccztdehzwmeidlroub.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_w5xlg-WqYYnkPk8AwX9qdQ_NpIoyOgi';
     try {
       const res = await fetch(
         SUPABASE_URL + '/rest/v1/produse_shop?in_shop=eq.true&order=creat_la.desc',
         { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
       );
-      const produse = await res.json();
-      if (!Array.isArray(produse) || produse.length === 0) return;
-      const section = document.getElementById('shop-produse');
-      const grid = document.getElementById('shop-grid');
-      section.style.display = 'block';
-      grid.innerHTML = produse.map(p => {
-        const marime1 = (p.marimi && p.marimi[0]) ? p.marimi[0] : null;
-        const pretMin = p.marimi && p.marimi.length ? Math.min(...p.marimi.map(m => m.pret).filter(Boolean)) : null;
-        const imagine = p.imagine ? `images/${p.imagine}` : null;
-        return `
-        <div class="product-card" data-cat="${p.categorie}" style="aspect-ratio:unset">
-          <div class="product-img" style="aspect-ratio:3/4">
-            ${imagine
-              ? `<img src="${imagine}" alt="${p.nume}" loading="lazy" onerror="this.closest('.product-card').style.display='none'">`
-              : `<div class="product-img-placeholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--cream-dark)">🧶</div>`}
-          </div>
-          <div class="product-body">
-            <div class="product-cat">${p.categorie}</div>
-            <div class="product-name">${p.nume}</div>
-            ${pretMin ? `<div class="product-price">${p.marimi.length > 1 ? 'de la ' : ''}${pretMin} RON</div>` : ''}
-          </div>
-          <div class="product-footer">
-            <a href="#personalizate" class="btn-add" style="display:block;text-align:center;text-decoration:none">Comandă</a>
-          </div>
-        </div>`;
-      }).join('');
-      grid.querySelectorAll('.product-card').forEach((el, i) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = `opacity 0.5s ${i*0.07}s, transform 0.5s ${i*0.07}s`;
-        setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 50);
-      });
-    } catch(e) { /* silently skip */ }
+      const data = await res.json();
+      allShopProduse = Array.isArray(data) ? data : [];
+    } catch(e) { allShopProduse = []; }
   }
+  loadShopProduse();
+
+  window.filtreazaShop = function(cat, cardEl) {
+    document.querySelectorAll('.category-card').forEach(c => c.style.outline = 'none');
+    cardEl.style.outline = '2px solid var(--crimson)';
+    const wrap = document.getElementById('shop-produse-wrap');
+    const grid = document.getElementById('shop-grid');
+    const empty = document.getElementById('shop-empty');
+    document.getElementById('shop-cat-label').textContent = catNames[cat] || cat;
+    document.getElementById('shop-cat-title').innerHTML = catNames[cat] + ' <em>disponibile</em>';
+    wrap.style.display = 'block';
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const filtered = allShopProduse.filter(p => p.categorie === cat || (cat === 'haine' && ['bluze','rochii','fuste'].includes(p.categorie)));
+    if (filtered.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    grid.innerHTML = filtered.map(p => {
+      const pretMin = p.marimi && p.marimi.length ? Math.min(...p.marimi.map(m => m.pret).filter(Boolean)) : null;
+      const imagine = p.imagine ? `images/${p.imagine}` : null;
+      const marimiText = (p.marimi || []).map(m => `${m.marime} – ${m.pret} RON`).join(' · ');
+      return `
+      <div class="product-card" style="aspect-ratio:unset">
+        <div class="product-img" style="aspect-ratio:3/4">
+          ${imagine
+            ? `<img src="${imagine}" alt="${p.nume}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+            : ''}
+          <div style="width:100%;height:100%;display:${imagine ? 'none' : 'flex'};align-items:center;justify-content:center;background:var(--cream-dark);font-size:3rem">🧶</div>
+        </div>
+        <div class="product-body">
+          <div class="product-cat">${catNames[p.categorie] || p.categorie}</div>
+          <div class="product-name">${p.nume}</div>
+          ${marimiText ? `<div style="font-size:0.8rem;color:var(--text-light);margin:6px 0">${marimiText}</div>` : ''}
+          ${pretMin ? `<div class="product-price">${p.marimi.length > 1 ? 'de la ' : ''}${pretMin} RON</div>` : ''}
+        </div>
+        <div class="product-footer">
+          <a href="#personalizate" class="btn-add" style="display:block;text-align:center;text-decoration:none">Comandă</a>
+        </div>
+      </div>`;
+    }).join('');
+    grid.querySelectorAll('.product-card').forEach((el, i) => {
+      el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
+      el.style.transition = `opacity 0.5s ${i*0.07}s, transform 0.5s ${i*0.07}s`;
+      setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 50);
+    });
+  };
+
+  window.inchideShop = function() {
+    document.getElementById('shop-produse-wrap').style.display = 'none';
+    document.querySelectorAll('.category-card').forEach(c => c.style.outline = 'none');
+  };
 
   // ── UPLOAD PREVIEW ──
   const uploadInput = document.getElementById('upload-input');
