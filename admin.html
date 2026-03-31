@@ -376,6 +376,112 @@
     font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase;
     padding: 3px 7px; border-radius: 2px;
   }
+
+  /* ── PRODUSE TAB ── */
+  .produse-list { background: var(--white); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; }
+
+  .produse-form-wrap { display: none; }
+  .produse-form-wrap.open { display: block; }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-light); cursor: pointer; border: none; background: none;
+    padding: 0; margin-bottom: 24px; transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--crimson); }
+
+  .form-section-title {
+    font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); margin: 28px 0 16px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .dynamic-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+  .dynamic-item {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .dynamic-item input {
+    flex: 1; padding: 9px 12px;
+    border: 1px solid var(--cream-dark); border-radius: 2px;
+    font-family: 'Jost', sans-serif; font-size: 0.88rem;
+    color: var(--text-dark); background: var(--cream); outline: none;
+  }
+  .dynamic-item input:focus { border-color: var(--crimson); }
+  .btn-remove-item {
+    width: 30px; height: 30px; border-radius: 2px; border: none;
+    background: #fef2f2; color: #991b1b; cursor: pointer; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .btn-add-item {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; background: none;
+    border: 1px dashed var(--crimson); border-radius: 2px;
+    color: var(--crimson); font-family: 'Jost', sans-serif;
+    font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-add-item:hover { background: var(--crimson); color: white; }
+
+  .tags-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; background: var(--cream-dark); border-radius: 2px;
+    font-size: 0.75rem; color: var(--text-mid);
+    cursor: pointer; border: 1px solid transparent; transition: all 0.15s;
+    user-select: none;
+  }
+  .tag-chip.selected { background: var(--crimson-deep); color: white; border-color: var(--crimson-deep); }
+
+  /* Fișă generator */
+  .fisa-wrap {
+    margin-top: 32px; background: var(--white);
+    border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .fisa-tabs { display: flex; border-bottom: 1px solid var(--cream-dark); }
+  .fisa-tab {
+    padding: 12px 20px; background: none; border: none;
+    font-family: 'Jost', sans-serif; font-size: 0.72rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-light); cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+  .fisa-tab.active { color: var(--crimson); border-bottom-color: var(--crimson); }
+  .fisa-content { padding: 20px; }
+  .fisa-output {
+    width: 100%; min-height: 220px;
+    font-family: 'Jost', monospace; font-size: 0.82rem; line-height: 1.7;
+    color: var(--text-dark); background: var(--cream);
+    border: 1px solid var(--cream-dark); border-radius: 2px;
+    padding: 14px; resize: vertical; outline: none;
+  }
+  .btn-copy {
+    margin-top: 10px; padding: 8px 18px;
+    background: var(--crimson-deep); color: white; border: none; border-radius: 2px;
+    font-family: 'Jost', sans-serif; font-size: 0.72rem;
+    letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-copy:hover { background: var(--crimson); }
+  .btn-genera {
+    width: 100%; padding: 14px; margin-top: 28px;
+    background: var(--crimson-deep); color: white; border: none; border-radius: 2px;
+    font-family: 'Jost', sans-serif; font-size: 0.78rem;
+    letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-genera:hover { background: var(--crimson); }
+  .btn-salveaza-produs {
+    padding: 12px 32px; background: var(--crimson); color: white;
+    border: none; border-radius: 2px; font-family: 'Jost', sans-serif;
+    font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+    cursor: pointer; transition: background 0.2s; margin-top: 8px;
+  }
+  .btn-salveaza-produs:hover { background: var(--crimson-deep); }
 </style>
 </head>
 <body>
@@ -399,6 +505,7 @@
     <div class="admin-tabs">
       <button class="tab-btn active" onclick="switchTab('galerie')">Galerie</button>
       <button class="tab-btn" onclick="switchTab('shop')">Shop</button>
+      <button class="tab-btn" onclick="switchTab('produse')">Produse</button>
     </div>
     <a href="adas-work.html" style="color:rgba(255,255,255,0.5);font-size:0.72rem;letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;margin-right:8px;">← Site</a>
     <button class="logout-btn" onclick="doLogout()">Ieși</button>
@@ -439,6 +546,150 @@
       <div id="shop-loading" class="loading-msg">Se încarcă...</div>
       <div class="cat-grid" id="cat-grid" style="display:none"></div>
     </div>
+
+    <!-- TAB PRODUSE -->
+    <div class="tab-panel" id="tab-produse">
+
+      <!-- LIST VIEW -->
+      <div id="produse-list-view">
+        <div class="toolbar">
+          <h2>Produse</h2>
+          <button class="btn-add" onclick="showProduseForm()">+ Produs nou</button>
+        </div>
+        <div id="produse-loading" class="loading-msg">Se încarcă...</div>
+        <div class="produse-list" id="produse-table-wrap" style="display:none">
+          <table class="data-table">
+            <thead><tr>
+              <th>Nume</th><th>Categorie</th><th>Tehnică</th><th>Status</th><th>Acțiuni</th>
+            </tr></thead>
+            <tbody id="produse-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FORM VIEW -->
+      <div class="produse-form-wrap" id="produse-form-view">
+        <button class="back-link" onclick="showProduseList()">← Înapoi la produse</button>
+        <input type="hidden" id="p-id">
+
+        <div class="form-section-title">Informații de bază</div>
+        <div class="form-group">
+          <label>Nume produs *</label>
+          <input type="text" id="p-nume" placeholder="ex: Bluză croșetată manuală">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Categorie *</label>
+            <select id="p-cat">
+              <option value="">Alege...</option>
+              <option value="rochii">Rochii</option>
+              <option value="fuste">Fuste</option>
+              <option value="bluze">Bluze</option>
+              <option value="caciuli">Căciuli</option>
+              <option value="paturi">Pături</option>
+              <option value="sosete">Șosete</option>
+              <option value="accesorii">Accesorii</option>
+              <option value="copii">Haine Copii</option>
+              <option value="bijuterii">Bijuterii</option>
+              <option value="deco">Decorațiuni</option>
+              <option value="altele">Altele</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tehnică</label>
+            <select id="p-tehnica">
+              <option value="croșetat">Croșetat</option>
+              <option value="tricotat">Tricotat</option>
+              <option value="croșetat și tricotat">Croșetat și tricotat</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Descriere scurtă *</label>
+          <textarea id="p-descriere" placeholder="Descrie piesa în câteva cuvinte..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Material / tip fir *</label>
+            <input type="text" id="p-material" placeholder="ex: Merino 100%, lână naturală">
+          </div>
+          <div class="form-group">
+            <label>Timp execuție</label>
+            <input type="text" id="p-timp" placeholder="ex: 3–5 zile">
+          </div>
+        </div>
+
+        <div class="form-section-title">Mărimi & Prețuri</div>
+        <div class="dynamic-list" id="marimi-list"></div>
+        <button class="btn-add-item" onclick="addMarime()">+ Adaugă mărime / variantă</button>
+
+        <div class="form-section-title">Culori disponibile</div>
+        <div class="dynamic-list" id="culori-list"></div>
+        <button class="btn-add-item" onclick="addCuloare()">+ Adaugă culoare</button>
+
+        <div class="form-section-title">Taxonomie & Etichete</div>
+        <div class="tags-wrap" id="etichete-wrap">
+          <div class="tag-chip" data-val="Lucrare manuală" onclick="toggleTag(this)">Lucrare manuală</div>
+          <div class="tag-chip" data-val="Măiestrit 2h+" onclick="toggleTag(this)">Măiestrit 2h+</div>
+          <div class="tag-chip" data-val="Nu se calcă" onclick="toggleTag(this)">Nu se calcă</div>
+          <div class="tag-chip" data-val="Lucru pliat" onclick="toggleTag(this)">Lucru pliat</div>
+          <div class="tag-chip" data-val="Nu se turbid" onclick="toggleTag(this)">Nu se turbid</div>
+          <div class="tag-chip" data-val="Cusătură chimică" onclick="toggleTag(this)">Cusătură chimică</div>
+          <div class="tag-chip" data-val="Cadou ideal" onclick="toggleTag(this)">Cadou ideal</div>
+          <div class="tag-chip" data-val="Colecție limitată" onclick="toggleTag(this)">Colecție limitată</div>
+        </div>
+
+        <div class="form-section-title">Disponibilitate & Vizibilitate</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Status</label>
+            <select id="p-status">
+              <option value="in_stoc">În stoc</option>
+              <option value="stoc_limitat">Stoc limitat</option>
+              <option value="indisponibil">Indisponibil</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Cantitate în stoc</label>
+            <input type="number" id="p-cantitate" placeholder="ex: 1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Nume fișier imagine (din folderul images/)</label>
+          <input type="text" id="p-imagine" placeholder="ex: bluze/bluza-1.png">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Link Etsy (opțional)</label>
+            <input type="text" id="p-etsy" placeholder="https://etsy.com/...">
+          </div>
+          <div class="form-group">
+            <label>Link Facebook Shop (opțional)</label>
+            <input type="text" id="p-fb" placeholder="https://facebook.com/...">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <button class="btn-salveaza-produs" onclick="saveProdusPersistent()">Salvează produsul</button>
+        </div>
+
+        <!-- GENERATOR FIȘĂ -->
+        <button class="btn-genera" onclick="genereazaFisa()">+ Generează fișa produsului</button>
+
+        <div class="fisa-wrap" id="fisa-wrap" style="display:none">
+          <div class="fisa-tabs">
+            <button class="fisa-tab active" onclick="switchFisa('ro', this)">Fișă RO</button>
+            <button class="fisa-tab" onclick="switchFisa('etsy', this)">ETSY RO</button>
+            <button class="fisa-tab" onclick="switchFisa('json', this)">JSON</button>
+          </div>
+          <div class="fisa-content">
+            <textarea class="fisa-output" id="fisa-output" readonly></textarea>
+            <button class="btn-copy" onclick="copyFisa()">Copiază</button>
+          </div>
+        </div>
+
+      </div><!-- /form view -->
+    </div><!-- /tab-produse -->
 
   </div>
 </div>
@@ -569,11 +820,12 @@ if (sessionStorage.getItem('ada_admin') === '1') {
 
 // ── TABS ──
 window.switchTab = function(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['galerie','shop'][i] === tab));
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['galerie','shop','produse'][i] === tab));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   if (tab === 'galerie') loadGalerie();
   if (tab === 'shop') loadShop();
+  if (tab === 'produse') loadProduse();
 };
 
 window.closeModal = function(id) {
@@ -798,6 +1050,282 @@ window.deleteShop = async function(id) {
   const { error } = await db.from('categorii_ada').delete().eq('id', id);
   if (error) { alert('Eroare: ' + error.message); return; }
   loadShop();
+};
+
+// ─────────────── PRODUSE SHOP ───────────────
+let produseShopData = [];
+let fisaData = {};
+
+async function loadProduse() {
+  document.getElementById('produse-loading').style.display = 'block';
+  document.getElementById('produse-table-wrap').style.display = 'none';
+  const { data, error } = await db.from('produse_shop').select('*').order('creat_la', { ascending: false });
+  if (error) { document.getElementById('produse-loading').textContent = 'Eroare.'; return; }
+  produseShopData = data || [];
+  renderProduseTable();
+}
+
+const statusLabel = { in_stoc: 'În stoc', stoc_limitat: 'Stoc limitat', indisponibil: 'Indisponibil' };
+const statusColor = { in_stoc: 'badge-ok', stoc_limitat: 'badge', indisponibil: 'badge-off' };
+
+function renderProduseTable() {
+  document.getElementById('produse-loading').style.display = 'none';
+  document.getElementById('produse-table-wrap').style.display = 'block';
+  const tbody = document.getElementById('produse-tbody');
+  if (produseShopData.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:40px">Niciun produs încă.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = produseShopData.map(p => `
+    <tr>
+      <td><strong>${p.nume}</strong></td>
+      <td><span class="badge-cat">${p.categorie}</span></td>
+      <td style="color:var(--text-light);font-size:0.82rem">${p.tehnica || '—'}</td>
+      <td><span class="badge ${statusColor[p.status] || 'badge'}">${statusLabel[p.status] || p.status}</span></td>
+      <td><div class="action-btns">
+        <button class="btn-edit" onclick="editProdusPersistent(${p.id})">Editează</button>
+        <button class="btn-del" onclick="deleteProdusPersistent(${p.id})">Șterge</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+window.showProduseForm = function(resetForm = true) {
+  document.getElementById('produse-list-view').style.display = 'none';
+  document.getElementById('produse-form-view').classList.add('open');
+  document.getElementById('fisa-wrap').style.display = 'none';
+  if (resetForm) {
+    document.getElementById('p-id').value = '';
+    document.getElementById('p-nume').value = '';
+    document.getElementById('p-cat').value = '';
+    document.getElementById('p-tehnica').value = 'croșetat';
+    document.getElementById('p-descriere').value = '';
+    document.getElementById('p-material').value = '';
+    document.getElementById('p-timp').value = '';
+    document.getElementById('p-status').value = 'in_stoc';
+    document.getElementById('p-cantitate').value = '';
+    document.getElementById('p-imagine').value = '';
+    document.getElementById('p-etsy').value = '';
+    document.getElementById('p-fb').value = '';
+    document.getElementById('marimi-list').innerHTML = '';
+    document.getElementById('culori-list').innerHTML = '';
+    document.querySelectorAll('#etichete-wrap .tag-chip').forEach(t => t.classList.remove('selected'));
+    addMarime(); addCuloare();
+  }
+};
+
+window.showProduseList = function() {
+  document.getElementById('produse-list-view').style.display = 'block';
+  document.getElementById('produse-form-view').classList.remove('open');
+};
+
+window.addMarime = function() {
+  const list = document.getElementById('marimi-list');
+  const div = document.createElement('div');
+  div.className = 'dynamic-item';
+  div.innerHTML = `<input type="text" placeholder="Mărime (ex: S/M, 38-40, Universal)" style="flex:2">
+    <input type="number" placeholder="Preț RON" style="flex:1">
+    <button class="btn-remove-item" onclick="this.parentElement.remove()">×</button>`;
+  list.appendChild(div);
+};
+
+window.addCuloare = function() {
+  const list = document.getElementById('culori-list');
+  const div = document.createElement('div');
+  div.className = 'dynamic-item';
+  div.innerHTML = `<input type="text" placeholder="ex: Roșu vișiniu, Ecru, Gri antracit">
+    <button class="btn-remove-item" onclick="this.parentElement.remove()">×</button>`;
+  list.appendChild(div);
+};
+
+window.toggleTag = function(el) { el.classList.toggle('selected'); };
+
+function getMarimi() {
+  return [...document.querySelectorAll('#marimi-list .dynamic-item')].map(row => {
+    const inputs = row.querySelectorAll('input');
+    return { marime: inputs[0].value.trim(), pret: parseFloat(inputs[1].value) || 0 };
+  }).filter(m => m.marime);
+}
+
+function getCulori() {
+  return [...document.querySelectorAll('#culori-list .dynamic-item input')].map(i => i.value.trim()).filter(Boolean);
+}
+
+function getEtichete() {
+  return [...document.querySelectorAll('#etichete-wrap .tag-chip.selected')].map(t => t.dataset.val);
+}
+
+function getProdusPersistentPayload() {
+  return {
+    nume: document.getElementById('p-nume').value.trim(),
+    categorie: document.getElementById('p-cat').value,
+    tehnica: document.getElementById('p-tehnica').value,
+    descriere: document.getElementById('p-descriere').value.trim(),
+    material: document.getElementById('p-material').value.trim(),
+    timp_executie: document.getElementById('p-timp').value.trim(),
+    marimi: getMarimi(),
+    culori: getCulori(),
+    etichete: getEtichete(),
+    status: document.getElementById('p-status').value,
+    cantitate: parseInt(document.getElementById('p-cantitate').value) || null,
+    imagine: document.getElementById('p-imagine').value.trim() || null,
+    link_etsy: document.getElementById('p-etsy').value.trim() || null,
+    link_facebook: document.getElementById('p-fb').value.trim() || null,
+  };
+}
+
+window.saveProdusPersistent = async function() {
+  const id = document.getElementById('p-id').value;
+  const payload = getProdusPersistentPayload();
+  if (!payload.nume) { alert('Completează numele produsului.'); return; }
+  if (!payload.categorie) { alert('Alege o categorie.'); return; }
+  let error;
+  if (id) {
+    ({ error } = await db.from('produse_shop').update(payload).eq('id', id));
+  } else {
+    ({ error } = await db.from('produse_shop').insert([payload]));
+  }
+  if (error) { alert('Eroare: ' + error.message); return; }
+  alert('Salvat!');
+  loadProduse();
+  showProduseList();
+};
+
+window.editProdusPersistent = function(id) {
+  const p = produseShopData.find(x => x.id === id);
+  if (!p) return;
+  showProduseForm(true);
+  document.getElementById('p-id').value = p.id;
+  document.getElementById('p-nume').value = p.nume;
+  document.getElementById('p-cat').value = p.categorie;
+  document.getElementById('p-tehnica').value = p.tehnica || 'croșetat';
+  document.getElementById('p-descriere').value = p.descriere || '';
+  document.getElementById('p-material').value = p.material || '';
+  document.getElementById('p-timp').value = p.timp_executie || '';
+  document.getElementById('p-status').value = p.status || 'in_stoc';
+  document.getElementById('p-cantitate').value = p.cantitate || '';
+  document.getElementById('p-imagine').value = p.imagine || '';
+  document.getElementById('p-etsy').value = p.link_etsy || '';
+  document.getElementById('p-fb').value = p.link_facebook || '';
+  // Mărimi
+  document.getElementById('marimi-list').innerHTML = '';
+  (p.marimi || []).forEach(m => {
+    addMarime();
+    const items = document.querySelectorAll('#marimi-list .dynamic-item');
+    const last = items[items.length - 1];
+    last.querySelectorAll('input')[0].value = m.marime;
+    last.querySelectorAll('input')[1].value = m.pret;
+  });
+  if (!p.marimi || p.marimi.length === 0) addMarime();
+  // Culori
+  document.getElementById('culori-list').innerHTML = '';
+  (p.culori || []).forEach(c => {
+    addCuloare();
+    const items = document.querySelectorAll('#culori-list .dynamic-item input');
+    items[items.length - 1].value = c;
+  });
+  if (!p.culori || p.culori.length === 0) addCuloare();
+  // Etichete
+  document.querySelectorAll('#etichete-wrap .tag-chip').forEach(t => {
+    t.classList.toggle('selected', (p.etichete || []).includes(t.dataset.val));
+  });
+};
+
+window.deleteProdusPersistent = async function(id) {
+  if (!confirm('Ștergi acest produs?')) return;
+  const { error } = await db.from('produse_shop').delete().eq('id', id);
+  if (error) { alert('Eroare: ' + error.message); return; }
+  loadProduse();
+};
+
+// ── GENERATOR FIȘĂ ──
+let fisaTab = 'ro';
+
+window.genereazaFisa = function() {
+  fisaData = getProdusPersistentPayload();
+  document.getElementById('fisa-wrap').style.display = 'block';
+  document.getElementById('fisa-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderFisa();
+};
+
+window.switchFisa = function(tab, btn) {
+  fisaTab = tab;
+  document.querySelectorAll('.fisa-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderFisa();
+};
+
+function renderFisa() {
+  const p = fisaData;
+  const marimi = (p.marimi || []).map(m => `• ${m.marime} – ${m.pret} RON`).join('\n');
+  const culori = (p.culori || []).join(', ') || '—';
+  const etichete = (p.etichete || []).join(' · ') || '';
+  const statusMap = { in_stoc: 'În stoc', stoc_limitat: 'Stoc limitat', indisponibil: 'Indisponibil' };
+
+  let text = '';
+  if (fisaTab === 'ro') {
+    text = `🧶 ${p.nume || '—'}
+
+📂 Categorie: ${p.categorie || '—'}
+✂️ Tehnică: ${p.tehnica || '—'}
+
+${p.descriere || ''}
+
+📏 MĂRIMI DISPONIBILE:
+${marimi || '—'}
+
+🎨 Culori disponibile: ${culori}
+
+🧵 Material: ${p.material || '—'}
+⏱ Timp de execuție: ${p.timp_executie || '—'}
+
+${etichete ? '✅ ' + etichete : ''}
+
+📦 Disponibilitate: ${statusMap[p.status] || p.status || '—'}${p.cantitate ? ' (cantitate: ' + p.cantitate + ')' : ''}
+${p.link_etsy ? '\n🛒 Etsy: ' + p.link_etsy : ''}${p.link_facebook ? '\n📘 Facebook Shop: ' + p.link_facebook : ''}`;
+  } else if (fisaTab === 'etsy') {
+    const priceRange = (p.marimi || []).length > 0
+      ? (p.marimi || []).map(m => m.pret).filter(Boolean)
+      : [];
+    const minPret = priceRange.length ? Math.min(...priceRange) : null;
+    text = `TITLU ETSY:
+${p.nume || '—'} – ${p.tehnica || 'handmade'} – ${p.categorie || ''} – Ada's Work
+
+DESCRIERE:
+${p.descriere || ''}
+
+Fiecare piesă este lucrată manual cu dragoste și atenție la detalii. Nicio piesă nu este identică — primești ceva unic, făcut special pentru tine.
+
+📏 OPȚIUNI DISPONIBILE:
+${marimi || '—'}
+
+🎨 CULORI: ${culori}
+
+🧵 MATERIAL: ${p.material || '—'}
+⏱ TIMP DE EXECUȚIE: ${p.timp_executie || '3–7 zile'}
+
+✨ DE CE SĂ ALEGI ADA'S WORK?
+• 100% handmade în Sibiu, România
+• Materiale naturale de calitate
+• Personalizare disponibilă la cerere
+• Ambalaj elegant, ideal cadou
+
+${etichete ? '🏷️ ' + etichete : ''}
+
+ETICHETE ETSY:
+handmade, croșetat, ${p.categorie || ''}, Romania, ${p.material || 'lana'}, ${(p.etichete || []).join(', ')}, Ada's Work, Sibiu`;
+  } else {
+    text = JSON.stringify(p, null, 2);
+  }
+  document.getElementById('fisa-output').value = text.trim();
+}
+
+window.copyFisa = function() {
+  const ta = document.getElementById('fisa-output');
+  ta.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.btn-copy');
+  btn.textContent = 'Copiat!';
+  setTimeout(() => btn.textContent = 'Copiază', 2000);
 };
 </script>
 </body>
