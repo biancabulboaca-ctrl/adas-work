@@ -545,6 +545,20 @@
       </div>
       <div id="shop-loading" class="loading-msg">Se încarcă...</div>
       <div class="cat-grid" id="cat-grid" style="display:none"></div>
+
+      <div style="margin-top:40px">
+        <div class="toolbar" style="margin-bottom:16px">
+          <h2 style="font-size:1.2rem">Produse active în shop</h2>
+        </div>
+        <div id="in-shop-loading" class="loading-msg" style="display:none">Se încarcă...</div>
+        <div id="in-shop-empty" class="loading-msg" style="display:none">Niciun produs marcat „În shop" încă.</div>
+        <table class="data-table" id="in-shop-table" style="display:none">
+          <thead><tr>
+            <th>Nume</th><th>Categorie</th><th>Mărimi & Prețuri</th><th>Status</th><th>Acțiuni</th>
+          </tr></thead>
+          <tbody id="in-shop-tbody"></tbody>
+        </table>
+      </div>
     </div>
 
     <!-- TAB PRODUSE -->
@@ -824,7 +838,7 @@ window.switchTab = function(tab) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   if (tab === 'galerie') loadGalerie();
-  if (tab === 'shop') loadShop();
+  if (tab === 'shop') { loadShop(); loadInShop(); }
   if (tab === 'produse') loadProduse();
 };
 
@@ -1050,6 +1064,34 @@ window.deleteShop = async function(id) {
   const { error } = await db.from('categorii_ada').delete().eq('id', id);
   if (error) { alert('Eroare: ' + error.message); return; }
   loadShop();
+};
+
+async function loadInShop() {
+  document.getElementById('in-shop-loading').style.display = 'block';
+  document.getElementById('in-shop-table').style.display = 'none';
+  document.getElementById('in-shop-empty').style.display = 'none';
+  const { data, error } = await db.from('produse_shop').select('*').eq('in_shop', true).order('creat_la', { ascending: false });
+  document.getElementById('in-shop-loading').style.display = 'none';
+  if (error || !data || data.length === 0) {
+    document.getElementById('in-shop-empty').style.display = 'block';
+    return;
+  }
+  const tbody = document.getElementById('in-shop-tbody');
+  tbody.innerHTML = data.map(p => `
+    <tr>
+      <td><strong>${p.nume}</strong></td>
+      <td><span class="badge-cat">${p.categorie}</span></td>
+      <td style="font-size:0.8rem;color:var(--text-mid)">${(p.marimi||[]).map(m=>`${m.marime} – ${m.pret} RON`).join('<br>') || '—'}</td>
+      <td><span class="badge ${statusColor[p.status] || ''}">${statusLabel[p.status] || p.status}</span></td>
+      <td><button class="btn-del" onclick="scoateDinShop(${p.id})">Scoate din shop</button></td>
+    </tr>`).join('');
+  document.getElementById('in-shop-table').style.display = 'table';
+}
+
+window.scoateDinShop = async function(id) {
+  const { error } = await db.from('produse_shop').update({ in_shop: false }).eq('id', id);
+  if (error) { alert('Eroare: ' + error.message); return; }
+  loadInShop();
 };
 
 // ─────────────── PRODUSE SHOP ───────────────
