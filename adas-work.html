@@ -1278,6 +1278,17 @@
   </div>
 </section>
 
+<!-- SHOP PRODUSE DE VÂNZARE -->
+<section id="shop-produse" style="display:none">
+  <div class="products-header">
+    <div>
+      <span class="section-label">De vânzare</span>
+      <h2 class="section-title">Disponibile <em>acum</em></h2>
+    </div>
+  </div>
+  <div class="products-grid" id="shop-grid"></div>
+</section>
+
 <!-- PRODUSE -->
 <section id="produse">
   <div class="products-header">
@@ -1734,6 +1745,50 @@
   });
 
   loadProducts();
+  loadShopProduse();
+
+  async function loadShopProduse() {
+    const SUPABASE_URL = 'https://zrccztdehzwmeidlroub.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_w5xlg-WqYYnkPk8AwX9qdQ_NpIoyOgi';
+    try {
+      const res = await fetch(
+        SUPABASE_URL + '/rest/v1/produse_shop?in_shop=eq.true&order=creat_la.desc',
+        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+      );
+      const produse = await res.json();
+      if (!Array.isArray(produse) || produse.length === 0) return;
+      const section = document.getElementById('shop-produse');
+      const grid = document.getElementById('shop-grid');
+      section.style.display = 'block';
+      grid.innerHTML = produse.map(p => {
+        const marime1 = (p.marimi && p.marimi[0]) ? p.marimi[0] : null;
+        const pretMin = p.marimi && p.marimi.length ? Math.min(...p.marimi.map(m => m.pret).filter(Boolean)) : null;
+        const imagine = p.imagine ? `images/${p.imagine}` : null;
+        return `
+        <div class="product-card" data-cat="${p.categorie}" style="aspect-ratio:unset">
+          <div class="product-img" style="aspect-ratio:3/4">
+            ${imagine
+              ? `<img src="${imagine}" alt="${p.nume}" loading="lazy" onerror="this.closest('.product-card').style.display='none'">`
+              : `<div class="product-img-placeholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--cream-dark)">🧶</div>`}
+          </div>
+          <div class="product-body">
+            <div class="product-cat">${p.categorie}</div>
+            <div class="product-name">${p.nume}</div>
+            ${pretMin ? `<div class="product-price">${p.marimi.length > 1 ? 'de la ' : ''}${pretMin} RON</div>` : ''}
+          </div>
+          <div class="product-footer">
+            <a href="#personalizate" class="btn-add" style="display:block;text-align:center;text-decoration:none">Comandă</a>
+          </div>
+        </div>`;
+      }).join('');
+      grid.querySelectorAll('.product-card').forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = `opacity 0.5s ${i*0.07}s, transform 0.5s ${i*0.07}s`;
+        setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 50);
+      });
+    } catch(e) { /* silently skip */ }
+  }
 
   // ── UPLOAD PREVIEW ──
   const uploadInput = document.getElementById('upload-input');
