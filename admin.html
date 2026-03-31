@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin – Ada's Work</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crimson: #8B1A1A;
+    --crimson-light: #B03030;
+    --crimson-deep: #5C0E0E;
+    --cream: #FAF6F0;
+    --cream-dark: #F0E8DC;
+    --gold: #9B7B3A;
+    --gold-light: #C4A05A;
+    --text-dark: #2A1A1A;
+    --text-mid: #5A3A3A;
+    --text-light: #8A6A6A;
+    --white: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Jost', sans-serif; background: var(--cream); color: var(--text-dark); min-height: 100vh; }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--crimson-deep) 0%, #3A0A0A 100%);
+  }
+  .login-box {
+    background: var(--white);
+    padding: 48px 40px;
+    border-radius: 4px;
+    width: 360px;
+    text-align: center;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+  }
+  .login-logo {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 2px solid var(--cream-dark);
+  }
+  .login-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    color: var(--crimson-deep);
+    margin-bottom: 4px;
+  }
+  .login-sub {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 32px;
+  }
+  .login-box input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--cream-dark);
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    background: var(--cream);
+    margin-bottom: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .login-box input:focus { border-color: var(--crimson); }
+  .login-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--crimson);
+    color: var(--white);
+    border: none;
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .login-btn:hover { background: var(--crimson-deep); }
+  .login-error {
+    color: var(--crimson);
+    font-size: 0.8rem;
+    margin-top: 10px;
+    display: none;
+  }
+
+  /* ── ADMIN LAYOUT ── */
+  #admin-panel { display: none; }
+
+  .admin-nav {
+    background: var(--crimson-deep);
+    padding: 0 40px;
+    display: flex; align-items: center; gap: 32px;
+    height: 56px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .admin-nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--gold-light);
+    font-style: italic;
+    white-space: nowrap;
+  }
+  .admin-tabs { display: flex; gap: 4px; flex: 1; }
+  .tab-btn {
+    padding: 0 20px;
+    height: 56px;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: rgba(255,255,255,0.9); }
+  .tab-btn.active { color: var(--gold-light); border-bottom-color: var(--gold-light); }
+  .logout-btn {
+    margin-left: auto;
+    padding: 7px 16px;
+    background: none;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.6);
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover { border-color: rgba(255,255,255,0.7); color: white; }
+
+  .admin-content { padding: 32px 40px; max-width: 1200px; margin: 0 auto; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .toolbar h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    color: var(--crimson-deep);
+    font-weight: 400;
+    flex: 1;
+  }
+  .toolbar select, .toolbar input[type="text"] {
+    padding: 8px 12px;
+    border: 1px solid var(--cream-dark);
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem;
+    color: var(--text-dark);
+    background: var(--white);
+    outline: none;
+  }
+  .btn-add {
+    padding: 9px 20px;
+    background: var(--crimson);
+    color: var(--white);
+    border: none;
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-add:hover { background: var(--crimson-deep); }
+
+  /* ── TABLE ── */
+  .data-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 4px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .data-table th {
+    background: var(--crimson-deep);
+    color: var(--gold-light);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 400;
+  }
+  .data-table td { padding: 12px 16px; border-bottom: 1px solid var(--cream-dark); font-size: 0.88rem; vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--cream); }
+  .data-table img { width: 60px; height: 60px; object-fit: cover; border-radius: 3px; border: 1px solid var(--cream-dark); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .badge-ok { background: #dcfce7; color: #166534; }
+  .badge-off { background: #fef2f2; color: #991b1b; }
+  .badge-cat {
+    background: var(--cream-dark);
+    color: var(--crimson);
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+  }
+
+  .action-btns { display: flex; gap: 8px; }
+  .btn-edit, .btn-del {
+    padding: 5px 12px;
+    border-radius: 2px;
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-edit { background: var(--cream-dark); color: var(--text-dark); }
+  .btn-edit:hover { background: var(--gold-light); color: white; }
+  .btn-del { background: #fef2f2; color: #991b1b; }
+  .btn-del:hover { background: #991b1b; color: white; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 200;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 4px;
+    padding: 32px;
+    width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+  }
+  .modal h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    color: var(--crimson-deep);
+    margin-bottom: 24px;
+    font-weight: 400;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 6px;
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--cream-dark);
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--crimson); }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+
+  .img-upload-area {
+    border: 2px dashed var(--cream-dark);
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .img-upload-area:hover { border-color: var(--crimson); }
+  .img-upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .img-upload-area .upload-label { font-size: 0.8rem; color: var(--text-light); }
+  .img-upload-area .upload-label span { color: var(--crimson); }
+  .img-preview { max-width: 100%; max-height: 200px; border-radius: 3px; margin-top: 10px; display: none; }
+  .upload-progress { font-size: 0.8rem; color: var(--gold); margin-top: 8px; display: none; }
+
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--cream-dark); }
+  .btn-cancel {
+    padding: 10px 20px;
+    background: none;
+    border: 1px solid var(--cream-dark);
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--text-mid);
+    transition: all 0.2s;
+  }
+  .btn-cancel:hover { border-color: var(--text-mid); }
+  .btn-save {
+    padding: 10px 24px;
+    background: var(--crimson);
+    color: var(--white);
+    border: none;
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-save:hover { background: var(--crimson-deep); }
+
+  /* ── SHOP CARDS ── */
+  .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .cat-card {
+    background: var(--white);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid var(--cream-dark);
+  }
+  .cat-card-img { width: 100%; height: 160px; object-fit: cover; background: var(--cream-dark); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+  .cat-card-img img { width: 100%; height: 100%; object-fit: cover; }
+  .cat-card-body { padding: 16px; }
+  .cat-card-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--crimson-deep); margin-bottom: 4px; }
+  .cat-card-desc { font-size: 0.8rem; color: var(--text-light); margin-bottom: 12px; }
+  .cat-card-actions { display: flex; gap: 8px; }
+
+  .loading-msg { text-align: center; padding: 60px 20px; color: var(--text-light); font-size: 0.9rem; letter-spacing: 0.05em; }
+
+  /* ── PHOTO GRID ── */
+  .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .photo-item { position: relative; aspect-ratio: 1; border-radius: 3px; overflow: hidden; background: var(--cream-dark); }
+  .photo-item img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-item-overlay {
+    position: absolute; inset: 0;
+    background: rgba(92,14,14,0.7);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .photo-item:hover .photo-item-overlay { opacity: 1; }
+  .photo-item-overlay button {
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.9);
+    color: var(--crimson-deep);
+    border: none; border-radius: 2px; cursor: pointer;
+    font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .photo-cat-badge {
+    position: absolute; bottom: 6px; left: 6px;
+    background: rgba(92,14,14,0.85);
+    color: var(--gold-light);
+    font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 3px 7px; border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <img src="sigla.png" alt="Ada's Work" class="login-logo">
+    <div class="login-title">Ada's Work</div>
+    <div class="login-sub">Panou de administrare</div>
+    <input type="password" id="login-pass" placeholder="Parolă" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Intră</button>
+    <div class="login-error" id="login-error">Parolă incorectă</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <nav class="admin-nav">
+    <div class="admin-nav-logo">Ada's Work · Admin</div>
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="switchTab('galerie')">Galerie</button>
+      <button class="tab-btn" onclick="switchTab('shop')">Shop</button>
+    </div>
+    <a href="adas-work.html" style="color:rgba(255,255,255,0.5);font-size:0.72rem;letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;margin-right:8px;">← Site</a>
+    <button class="logout-btn" onclick="doLogout()">Ieși</button>
+  </nav>
+
+  <div class="admin-content">
+
+    <!-- TAB GALERIE -->
+    <div class="tab-panel active" id="tab-galerie">
+      <div class="toolbar">
+        <h2>Galerie produse</h2>
+        <select id="filter-cat-galerie" onchange="filterGalerie()">
+          <option value="">Toate categoriile</option>
+          <option value="rochii">Rochii</option>
+          <option value="fuste">Fuste</option>
+          <option value="bluze">Bluze</option>
+          <option value="caciuli">Căciuli</option>
+          <option value="paturi">Pături</option>
+          <option value="sosete">Șosete</option>
+          <option value="accesorii">Accesorii</option>
+          <option value="copii">Haine Copii</option>
+          <option value="bijuterii">Bijuterii</option>
+          <option value="deco">Decorațiuni</option>
+          <option value="altele">Altele</option>
+        </select>
+        <button class="btn-add" onclick="openGalerieModal()">+ Adaugă foto</button>
+      </div>
+      <div id="galerie-loading" class="loading-msg">Se încarcă galeria...</div>
+      <div class="photo-grid" id="photo-grid" style="display:none"></div>
+    </div>
+
+    <!-- TAB SHOP -->
+    <div class="tab-panel" id="tab-shop">
+      <div class="toolbar">
+        <h2>Categorii Shop</h2>
+        <button class="btn-add" onclick="openShopModal()">+ Adaugă categorie</button>
+      </div>
+      <div id="shop-loading" class="loading-msg">Se încarcă...</div>
+      <div class="cat-grid" id="cat-grid" style="display:none"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL GALERIE -->
+<div class="modal-overlay" id="modal-galerie">
+  <div class="modal">
+    <h3 id="galerie-modal-title">Adaugă fotografie</h3>
+    <input type="hidden" id="g-id">
+    <div class="form-group">
+      <label>Categorie</label>
+      <select id="g-cat">
+        <option value="rochii">Rochii</option>
+        <option value="fuste">Fuste</option>
+        <option value="bluze">Bluze</option>
+        <option value="caciuli">Căciuli</option>
+        <option value="paturi">Pături</option>
+        <option value="sosete">Șosete</option>
+        <option value="accesorii">Accesorii</option>
+        <option value="copii">Haine Copii</option>
+        <option value="bijuterii">Bijuterii</option>
+        <option value="deco">Decorațiuni</option>
+        <option value="altele">Altele</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Titlu (opțional)</label>
+      <input type="text" id="g-titlu" placeholder="ex: Bluză croșetată manuală">
+    </div>
+    <div class="form-group">
+      <label>Preț (opțional)</label>
+      <input type="number" id="g-pret" placeholder="ex: 120">
+    </div>
+    <div class="form-group">
+      <label>Imagine</label>
+      <div class="img-upload-area" onclick="document.getElementById('g-file').click()">
+        <input type="file" id="g-file" accept="image/*" onchange="previewGalerieImg(this)" style="display:none">
+        <div class="upload-label">Click pentru a selecta imaginea<br><span>sau drag & drop</span></div>
+        <img id="g-img-preview" class="img-preview">
+        <div class="upload-progress" id="g-upload-progress">Se încarcă...</div>
+      </div>
+      <input type="hidden" id="g-imagine">
+    </div>
+    <div class="form-group">
+      <label>Disponibil</label>
+      <select id="g-disponibil">
+        <option value="true">Da</option>
+        <option value="false">Nu</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-galerie')">Anulează</button>
+      <button class="btn-save" onclick="saveGalerie()">Salvează</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SHOP -->
+<div class="modal-overlay" id="modal-shop">
+  <div class="modal">
+    <h3 id="shop-modal-title">Adaugă categorie</h3>
+    <input type="hidden" id="s-id">
+    <div class="form-group">
+      <label>Slug (URL key, ex: haine, copii)</label>
+      <input type="text" id="s-slug" placeholder="ex: haine">
+    </div>
+    <div class="form-group">
+      <label>Nume afișat</label>
+      <input type="text" id="s-nume" placeholder="ex: Haine Adulți">
+    </div>
+    <div class="form-group">
+      <label>Descriere</label>
+      <input type="text" id="s-desc" placeholder="ex: Pulovere, cardigane, topuri croșetate">
+    </div>
+    <div class="form-group">
+      <label>Imagine</label>
+      <div class="img-upload-area" onclick="document.getElementById('s-file').click()">
+        <input type="file" id="s-file" accept="image/*" onchange="previewShopImg(this)" style="display:none">
+        <div class="upload-label">Click pentru a selecta imaginea<br><span>sau drag & drop</span></div>
+        <img id="s-img-preview" class="img-preview">
+        <div class="upload-progress" id="s-upload-progress">Se încarcă...</div>
+      </div>
+      <input type="hidden" id="s-imagine">
+    </div>
+    <div class="form-group">
+      <label>Ordine (număr mic = primul)</label>
+      <input type="number" id="s-ordine" value="0">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-shop')">Anulează</button>
+      <button class="btn-save" onclick="saveShop()">Salvează</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://zrccztdehzwmeidlroub.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_w5xlg-WqYYnkPk8AwX9qdQ_NpIoyOgi';
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const BUCKET_GALERIE = 'ada-galerie';
+const BUCKET_SHOP = 'ada-shop';
+
+// ── AUTH ──
+window.doLogin = function() {
+  const pass = document.getElementById('login-pass').value;
+  if (pass === 'adaswork2024') {
+    sessionStorage.setItem('ada_admin', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadGalerie();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+};
+
+window.doLogout = function() {
+  sessionStorage.removeItem('ada_admin');
+  location.reload();
+};
+
+if (sessionStorage.getItem('ada_admin') === '1') {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-panel').style.display = 'block';
+  loadGalerie();
+}
+
+// ── TABS ──
+window.switchTab = function(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['galerie','shop'][i] === tab));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'galerie') loadGalerie();
+  if (tab === 'shop') loadShop();
+};
+
+window.closeModal = function(id) {
+  document.getElementById(id).classList.remove('open');
+};
+
+// ─────────────── GALERIE ───────────────
+let galerieData = [];
+
+async function loadGalerie() {
+  document.getElementById('galerie-loading').style.display = 'block';
+  document.getElementById('photo-grid').style.display = 'none';
+  const { data, error } = await db.from('produse_ada').select('*').order('ordine');
+  if (error) { document.getElementById('galerie-loading').textContent = 'Eroare la încărcare.'; return; }
+  galerieData = data || [];
+  renderGalerie(galerieData);
+}
+
+function renderGalerie(items) {
+  document.getElementById('galerie-loading').style.display = 'none';
+  const grid = document.getElementById('photo-grid');
+  grid.style.display = 'grid';
+  if (items.length === 0) {
+    grid.innerHTML = '<div class="loading-msg" style="grid-column:1/-1">Nicio fotografie încă.</div>';
+    return;
+  }
+  grid.innerHTML = items.map(p => `
+    <div class="photo-item">
+      <img src="${p.imagine}" alt="${p.categorie}" loading="lazy" onerror="this.src='sigla.png'">
+      <div class="photo-cat-badge">${p.categorie}</div>
+      <div class="photo-item-overlay">
+        <button onclick="editGalerie(${p.id})">Editează</button>
+        <button onclick="deleteGalerie(${p.id})">Șterge</button>
+      </div>
+    </div>`).join('');
+}
+
+window.filterGalerie = function() {
+  const cat = document.getElementById('filter-cat-galerie').value;
+  const filtered = cat ? galerieData.filter(p => p.categorie === cat) : galerieData;
+  renderGalerie(filtered);
+};
+
+window.openGalerieModal = function() {
+  document.getElementById('galerie-modal-title').textContent = 'Adaugă fotografie';
+  document.getElementById('g-id').value = '';
+  document.getElementById('g-cat').value = 'rochii';
+  document.getElementById('g-titlu').value = '';
+  document.getElementById('g-pret').value = '';
+  document.getElementById('g-imagine').value = '';
+  document.getElementById('g-disponibil').value = 'true';
+  document.getElementById('g-img-preview').style.display = 'none';
+  document.getElementById('g-img-preview').src = '';
+  document.getElementById('modal-galerie').classList.add('open');
+};
+
+window.editGalerie = function(id) {
+  const p = galerieData.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('galerie-modal-title').textContent = 'Editează fotografie';
+  document.getElementById('g-id').value = p.id;
+  document.getElementById('g-cat').value = p.categorie;
+  document.getElementById('g-titlu').value = p.titlu || '';
+  document.getElementById('g-pret').value = p.pret || '';
+  document.getElementById('g-imagine').value = p.imagine;
+  document.getElementById('g-disponibil').value = p.disponibil ? 'true' : 'false';
+  const prev = document.getElementById('g-img-preview');
+  prev.src = p.imagine; prev.style.display = 'block';
+  document.getElementById('modal-galerie').classList.add('open');
+};
+
+window.previewGalerieImg = async function(input) {
+  const file = input.files[0]; if (!file) return;
+  const prog = document.getElementById('g-upload-progress');
+  prog.style.display = 'block'; prog.textContent = 'Se încarcă...';
+  const ext = file.name.split('.').pop();
+  const path = `galerie/${Date.now()}.${ext}`;
+  const { error } = await db.storage.from(BUCKET_GALERIE).upload(path, file, { upsert: true });
+  if (error) { prog.textContent = 'Eroare upload: ' + error.message; return; }
+  const { data: { publicUrl } } = db.storage.from(BUCKET_GALERIE).getPublicUrl(path);
+  document.getElementById('g-imagine').value = publicUrl;
+  const prev = document.getElementById('g-img-preview');
+  prev.src = publicUrl; prev.style.display = 'block';
+  prog.style.display = 'none';
+};
+
+window.saveGalerie = async function() {
+  const id = document.getElementById('g-id').value;
+  const imagine = document.getElementById('g-imagine').value;
+  if (!imagine) { alert('Adaugă o imagine.'); return; }
+  const payload = {
+    categorie: document.getElementById('g-cat').value,
+    titlu: document.getElementById('g-titlu').value || null,
+    pret: document.getElementById('g-pret').value ? parseFloat(document.getElementById('g-pret').value) : null,
+    imagine,
+    disponibil: document.getElementById('g-disponibil').value === 'true',
+  };
+  let error;
+  if (id) {
+    ({ error } = await db.from('produse_ada').update(payload).eq('id', id));
+  } else {
+    const { data: max } = await db.from('produse_ada').select('ordine').order('ordine', { ascending: false }).limit(1);
+    payload.ordine = max && max.length > 0 ? max[0].ordine + 1 : 1;
+    ({ error } = await db.from('produse_ada').insert([payload]));
+  }
+  if (error) { alert('Eroare: ' + error.message); return; }
+  closeModal('modal-galerie');
+  loadGalerie();
+};
+
+window.deleteGalerie = async function(id) {
+  if (!confirm('Ștergi această fotografie?')) return;
+  const { error } = await db.from('produse_ada').delete().eq('id', id);
+  if (error) { alert('Eroare: ' + error.message); return; }
+  loadGalerie();
+};
+
+// ─────────────── SHOP ───────────────
+let shopData = [];
+
+async function loadShop() {
+  document.getElementById('shop-loading').style.display = 'block';
+  document.getElementById('cat-grid').style.display = 'none';
+  const { data, error } = await db.from('categorii_ada').select('*').order('ordine');
+  if (error) { document.getElementById('shop-loading').textContent = 'Eroare la încărcare.'; return; }
+  shopData = data || [];
+  renderShop();
+}
+
+function renderShop() {
+  document.getElementById('shop-loading').style.display = 'none';
+  const grid = document.getElementById('cat-grid');
+  grid.style.display = 'grid';
+  if (shopData.length === 0) {
+    grid.innerHTML = '<div class="loading-msg" style="grid-column:1/-1">Nicio categorie încă.</div>';
+    return;
+  }
+  grid.innerHTML = shopData.map(c => `
+    <div class="cat-card">
+      <div class="cat-card-img">
+        ${c.imagine ? `<img src="${c.imagine}" alt="${c.nume}">` : '🧶'}
+      </div>
+      <div class="cat-card-body">
+        <div class="cat-card-name">${c.nume}</div>
+        <div class="cat-card-desc">${c.descriere || ''}</div>
+        <div class="cat-card-actions">
+          <button class="btn-edit" onclick="editShop(${c.id})">Editează</button>
+          <button class="btn-del" onclick="deleteShop(${c.id})">Șterge</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+window.openShopModal = function() {
+  document.getElementById('shop-modal-title').textContent = 'Adaugă categorie';
+  document.getElementById('s-id').value = '';
+  document.getElementById('s-slug').value = '';
+  document.getElementById('s-nume').value = '';
+  document.getElementById('s-desc').value = '';
+  document.getElementById('s-imagine').value = '';
+  document.getElementById('s-ordine').value = shopData.length;
+  document.getElementById('s-img-preview').style.display = 'none';
+  document.getElementById('modal-shop').classList.add('open');
+};
+
+window.editShop = function(id) {
+  const c = shopData.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('shop-modal-title').textContent = 'Editează categorie';
+  document.getElementById('s-id').value = c.id;
+  document.getElementById('s-slug').value = c.slug;
+  document.getElementById('s-nume').value = c.nume;
+  document.getElementById('s-desc').value = c.descriere || '';
+  document.getElementById('s-imagine').value = c.imagine || '';
+  document.getElementById('s-ordine').value = c.ordine;
+  const prev = document.getElementById('s-img-preview');
+  if (c.imagine) { prev.src = c.imagine; prev.style.display = 'block'; }
+  else { prev.style.display = 'none'; }
+  document.getElementById('modal-shop').classList.add('open');
+};
+
+window.previewShopImg = async function(input) {
+  const file = input.files[0]; if (!file) return;
+  const prog = document.getElementById('s-upload-progress');
+  prog.style.display = 'block'; prog.textContent = 'Se încarcă...';
+  const ext = file.name.split('.').pop();
+  const path = `categorii/${Date.now()}.${ext}`;
+  const { error } = await db.storage.from(BUCKET_SHOP).upload(path, file, { upsert: true });
+  if (error) { prog.textContent = 'Eroare upload: ' + error.message; return; }
+  const { data: { publicUrl } } = db.storage.from(BUCKET_SHOP).getPublicUrl(path);
+  document.getElementById('s-imagine').value = publicUrl;
+  const prev = document.getElementById('s-img-preview');
+  prev.src = publicUrl; prev.style.display = 'block';
+  prog.style.display = 'none';
+};
+
+window.saveShop = async function() {
+  const id = document.getElementById('s-id').value;
+  const slug = document.getElementById('s-slug').value.trim();
+  const nume = document.getElementById('s-nume').value.trim();
+  if (!slug || !nume) { alert('Completează slug-ul și numele.'); return; }
+  const payload = {
+    slug,
+    nume,
+    descriere: document.getElementById('s-desc').value || null,
+    imagine: document.getElementById('s-imagine').value || null,
+    ordine: parseInt(document.getElementById('s-ordine').value) || 0,
+  };
+  let error;
+  if (id) {
+    ({ error } = await db.from('categorii_ada').update(payload).eq('id', id));
+  } else {
+    ({ error } = await db.from('categorii_ada').insert([payload]));
+  }
+  if (error) { alert('Eroare: ' + error.message); return; }
+  closeModal('modal-shop');
+  loadShop();
+};
+
+window.deleteShop = async function(id) {
+  if (!confirm('Ștergi această categorie?')) return;
+  const { error } = await db.from('categorii_ada').delete().eq('id', id);
+  if (error) { alert('Eroare: ' + error.message); return; }
+  loadShop();
+};
+</script>
+</body>
+</html>

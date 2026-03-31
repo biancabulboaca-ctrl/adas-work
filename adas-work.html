@@ -1180,6 +1180,7 @@
     <li><a href="#despre">Despre Ada</a></li>
     <li><a href="#contact" class="nav-cta">Contact</a></li>
   </ul>
+  <a href="admin.html" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:0.6rem;color:rgba(90,58,58,0.25);text-decoration:none;letter-spacing:0.08em;" title="Admin">·</a>
 </nav>
 
 <!-- HERO -->
@@ -1690,13 +1691,18 @@
     grid.innerHTML = banner + cards;
   }
 
-  // ── FETCH produse.json ──
+  // ── FETCH din Supabase ──
   async function loadProducts() {
     try {
-      const res = await fetch('produse.json');
+      const SUPABASE_URL = 'https://zrccztdehzwmeidlroub.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_w5xlg-WqYYnkPk8AwX9qdQ_NpIoyOgi';
+      const res = await fetch(
+        SUPABASE_URL + '/rest/v1/produse_ada?disponibil=eq.true&order=ordine',
+        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+      );
       if (!res.ok) throw new Error('fetch failed');
       allProducts = await res.json();
-      if (allProducts.length === 0) { showPlaceholders(); return; }
+      if (!Array.isArray(allProducts) || allProducts.length === 0) { showPlaceholders(); return; }
       renderGrid();
     } catch(e) {
       showPlaceholders();
