@@ -921,15 +921,12 @@ window.previewGalerieImg = function(input) {
   const file = input.files[0]; if (!file) return;
   const prog = document.getElementById('g-upload-progress');
   prog.style.display = 'block'; prog.textContent = 'Se procesează...';
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const dataUrl = e.target.result;
+  compressImage(file, 800, 0.82, function(dataUrl) {
     document.getElementById('g-imagine').value = dataUrl;
     const prev = document.getElementById('g-img-preview');
     prev.src = dataUrl; prev.style.display = 'block';
     prog.style.display = 'none';
-  };
-  reader.readAsDataURL(file);
+  });
 };
 
 window.saveGalerie = async function() {
@@ -1031,15 +1028,12 @@ window.previewShopImg = function(input) {
   const file = input.files[0]; if (!file) return;
   const prog = document.getElementById('s-upload-progress');
   prog.style.display = 'block'; prog.textContent = 'Se procesează...';
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const dataUrl = e.target.result;
+  compressImage(file, 800, 0.82, function(dataUrl) {
     document.getElementById('s-imagine').value = dataUrl;
     const prev = document.getElementById('s-img-preview');
     prev.src = dataUrl; prev.style.display = 'block';
     prog.style.display = 'none';
-  };
-  reader.readAsDataURL(file);
+  });
 };
 
 window.saveShop = async function() {
@@ -1295,19 +1289,34 @@ window.deleteProdusPersistent = async function(id) {
   loadProduse();
 };
 
+function compressImage(file, maxW, quality, cb) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const scale = Math.min(1, maxW / img.width);
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      cb(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 window.uploadProdusFoto = function(input) {
   const file = input.files[0]; if (!file) return;
   const prog = document.getElementById('p-upload-progress');
   prog.style.display = 'block'; prog.textContent = 'Se procesează...';
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const dataUrl = e.target.result;
+  compressImage(file, 800, 0.82, function(dataUrl) {
     document.getElementById('p-imagine').value = dataUrl;
     const prev = document.getElementById('p-img-preview');
     prev.src = dataUrl; prev.style.display = 'block';
     prog.style.display = 'none';
-  };
-  reader.readAsDataURL(file);
+  });
 };
 
 window.toggleInShop = async function(id, currentVal) {
