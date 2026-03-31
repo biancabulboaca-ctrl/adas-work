@@ -669,8 +669,14 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Nume fișier imagine (din folderul images/)</label>
-          <input type="text" id="p-imagine" placeholder="ex: bluze/bluza-1.png">
+          <label>Imagine produs</label>
+          <div class="img-upload-area" onclick="document.getElementById('p-file').click()">
+            <input type="file" id="p-file" accept="image/*" onchange="uploadProdusFoto(this)" style="display:none">
+            <div class="upload-label">Click pentru a încărca imaginea<br><span>sau drag & drop</span></div>
+            <img id="p-img-preview" class="img-preview">
+            <div class="upload-progress" id="p-upload-progress">Se încarcă...</div>
+          </div>
+          <input type="hidden" id="p-imagine">
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -1253,6 +1259,9 @@ window.editProdusPersistent = function(id) {
   document.getElementById('p-status').value = p.status || 'in_stoc';
   document.getElementById('p-cantitate').value = p.cantitate || '';
   document.getElementById('p-imagine').value = p.imagine || '';
+  const pPrev = document.getElementById('p-img-preview');
+  if (p.imagine) { pPrev.src = p.imagine; pPrev.style.display = 'block'; }
+  else { pPrev.style.display = 'none'; }
   document.getElementById('p-etsy').value = p.link_etsy || '';
   document.getElementById('p-fb').value = p.link_facebook || '';
   // Mărimi
@@ -1284,6 +1293,21 @@ window.deleteProdusPersistent = async function(id) {
   const { error } = await db.from('produse_shop').delete().eq('id', id);
   if (error) { alert('Eroare: ' + error.message); return; }
   loadProduse();
+};
+
+window.uploadProdusFoto = async function(input) {
+  const file = input.files[0]; if (!file) return;
+  const prog = document.getElementById('p-upload-progress');
+  prog.style.display = 'block'; prog.textContent = 'Se încarcă...';
+  const ext = file.name.split('.').pop();
+  const path = `produse/${Date.now()}.${ext}`;
+  const { error } = await db.storage.from(BUCKET_GALERIE).upload(path, file, { upsert: true });
+  if (error) { prog.textContent = 'Eroare: ' + error.message; return; }
+  const { data: { publicUrl } } = db.storage.from(BUCKET_GALERIE).getPublicUrl(path);
+  document.getElementById('p-imagine').value = publicUrl;
+  const prev = document.getElementById('p-img-preview');
+  prev.src = publicUrl; prev.style.display = 'block';
+  prog.style.display = 'none';
 };
 
 window.toggleInShop = async function(id, currentVal) {
